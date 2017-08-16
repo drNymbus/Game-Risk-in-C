@@ -4,6 +4,17 @@
 #include <time.h>
 #include "risk_model.h"
 
+bool compare_char(char* char1, char* char2){
+  uint i = 0;
+  while(char1+i != "\0"){
+    if(char1+i != char2+i){
+      return false;
+    }
+    i++;
+  }
+  return true;
+}
+
 void swap(uint tab[],uint i,uint j){
   uint tmp = tab[i];
   tab[i] = tab[j];

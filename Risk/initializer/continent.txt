@@ -1,0 +1,54 @@
+NB_CONTINENT
+  Europe 7
+Grande-Bretagne
+Islande
+Europe du Nord
+Scandinavie
+Europe du Sud
+Ukraine
+Europe_occidentale
+
+  Asie 12
+Afghanistan
+Chine
+Inde
+Tchita
+Japon
+Kamtchatka
+Moyen-Orient
+Mongolie
+Siam
+Sibérie
+Oural
+Yakoutie
+
+  Amerique_Nord 9
+Alaska
+Alberta
+Amerique_centrale
+Etats_de_l'Est
+Groenland
+Territoires_du_Nord-Ouest
+Ontario
+Quebec
+Etats_de_l'Ouest
+
+  Amerique_Sud 4
+Argentine
+Bresil
+Perou
+Venezuela
+
+  Afrique 6
+Congo
+Afrique_de_l’Est
+Egypte
+Madagascar
+Afrique_du_Nord
+Afrique_du_Sud
+
+  Oceanie 4
+Australie_Orientale
+Indonesie
+Nouvelle-Guinee
+Australie_Occidentale

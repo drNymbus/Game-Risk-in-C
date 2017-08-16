@@ -45,6 +45,7 @@ typedef struct{
   char color;
 } user_t;
 
+bool compare_char(char* char1, char* char2);
 void swap(uint tab[],uint i,uint j);
 void sort_array(uint t[],uint size);
 
