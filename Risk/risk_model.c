@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+
 #include "risk_model.h"
 
 bool compare_char(char* char1, char* char2){
@@ -33,13 +34,13 @@ void sort_array(uint t[],uint size){
 
 uint * roll_dices(uint nb_dice){
   static uint res[3];
-  for(uint i=0; i<nb_dice; i++){
+  for(uint i=0; i<nb_dice; i++){ //simule le lancer de des
     srand(time(NULL));
     uint roll = rand()%6 +1;
     res[i] = roll;
   }
-  if(nb_dice == 3){
-    if(res[0]<res[2]){
+  if(nb_dice == 3){ // compare les lancers de des
+    if(res[0]<res[2]){ // pour ne garder que les 2 plus grands
       swap(res,0,2);
     }
     if(res[1]<res[2]){
@@ -56,6 +57,7 @@ void swap_user(user_t* users[NB_MAX_PLAYERS], uint i, uint j){
 }
 
 void ranking_struct(user_t* users[NB_MAX_PLAYERS], uint nb_players){
+  // trie les joueurs en fonction du nombre de pays passeder
   for(uint i=0; i<nb_players; i++){
     uint j = i;
     while(NB_MAX_PLAYERS-j > 0){
@@ -83,14 +85,6 @@ void set_country_owner(country_t* country, user_t* owner){
   (*country).owner = (*owner).name;
 }
 
-void set_continent_owner(continent_t* continent, user_t* owner){
-  (*owner).nb_continent++;
-  uint nb_continent = (*owner).nb_continent;
-  (*owner).continents[nb_continent-1] = continent;
-  //char* name_owner = (*owner).name;
-  (*continent).owner = (*owner).name;
-}
-
 void set_capital(country_t* country){
   (*country).capital = true;
 }
@@ -101,7 +95,6 @@ void move_troops(country_t* country_from, country_t* country_to, uint nb_units){
   if((*country_from).current_troop == 0){
     add_troops(country_from, nb_units);
     loss_troops(country_to, nb_units);
-    //hard_treat_error("Cannot not move so much soldier");
   }
 }
 
@@ -111,35 +104,42 @@ void add_stars(user_t* user){
 }
 
 uint* attack_roll(uint attack, uint defense){
+  // attack et defense represente le nombre de troop dans le pays
   uint* attack_roll = NULL;
   uint* defense_roll = NULL;
+  // le nb de troop determine le nb de des
   if(attack > 3){
     attack_roll = roll_dices(3);
   }else if(attack <= 3){
     attack_roll = roll_dices(attack -1);
   }
+  // meme chose pour la defense
   if(defense > 2){
     defense_roll = roll_dices(2);
   }else{
     defense_roll = roll_dices(1);
   }
   static uint res[2] = {0,0};
-  for(uint i=0; i<2; i++){
+  for(uint i=0; i<2; i++){ // compare les lancers de des
     if(attack_roll[i] > defense_roll[i]){
       res[0]++;
     }else{
       res[1]++;
     }
   }
+  // res[0] = nb de mort en defense
+  // res[1] = nb de mort en attaque
   return res;
 }
 
 uint* attack( country_t* attack, country_t* defense ){
+  // simule l'attaque d'un pays de a a z
   uint attack_troop = (*attack).current_troop;
   uint defense_troop = (*defense).current_troop;
   uint* loss = attack_roll(attack_troop, defense_troop);
-  attack_troop = attack_troop - loss[0];
-  defense_troop = defense_troop - loss[1];
+  loss_troops(attack, loss[1]);
+  loss_troops(defense, loss[0]);
+  // retourne le nb de perte pour l'affichage
   return loss;
 }
 
@@ -162,14 +162,9 @@ void set_continents_owned(user_t* owner, continent_t* continents[CONTINENT_OWNED
 }
 
 uint nb_capital_owned(user_t* owner){
-  country_t* countries[nb_country_max];
+  uint nb_cap =  0;
   for(uint i=0; i<(*owner).nb_country; i++){
-    countries[i] = (*owner).countries[i];
-  }
-  uint nb_cap = 0;
-  for(uint i=0; i<(*owner).nb_country; i++){
-    country_t* country = countries[i];
-    if((*country).capital){
+    if((*(*owner).countries[i]).capital){
       nb_cap++;
     }
   }
@@ -186,49 +181,4 @@ void calcul_gain(user_t* owner){
     }
   gain = gain + nb_capital_owned(owner);
   (*owner).gain = gain;
-}
-/*
-continent_t create_continent(char name[LENGTH_MAX],uint nb_country,country_t* countries[NB_CONTINENT_MAX],uint bonus_troop){
-  continent_t continent;// = {name,no_owner,nb_country,countries,bonus_troop};
-  for(uint i=0; name[i]!='\0'; i++){
-    continent.name[i] = name[i];
-  }
-  continent.name[LENGTH_MAX-1] = '\0';
-  continent.owner = no_owner;
-  continent.nb_country = nb_country;
-  for(uint i=0; i<nb_country; i++){
-    continent.countries[i] = countries[i];
-  }
-  continent.bonus_troop = bonus_troop;
-  return continent;
-}
-
-country_t create_country(char country_name[LENGTH_MAX],continent_t* continent, position_t* p_pos){
-  country_t country;
-  country_t* p_country = &(country);
-  for(uint i=0; country_name[i]!='\0'; i++){
-    (*p_country).name[i] = country_name[i];
-  }
-  (*p_country).name[LENGTH_MAX-1] = '\0';
-  (*p_country).continent = (*continent).name;
-  (*p_country).position = p_pos;
-  return country;
-}
-*/
-user_t create_user(char* name){
-  user_t user;// = {name,0,{},0,{},0,0};
-  user.name = name;
-  user.nb_country = 0;
-  user.nb_continent = 0;
-  user.gain = 0;
-  return user;
-}
-
-void set_position(country_t* country, uint pos_x, uint pos_y){
-  position_t position = {pos_x,pos_y};
-  (*country).position = &(position);
-}
-
-void set_connections(country_t* country){
-
 }

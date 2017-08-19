@@ -56,7 +56,6 @@ void add_troops(country_t* country, uint gain);
 void loss_troops(country_t* country, uint loss);
 
 void set_country_owner(country_t* country, user_t* owner);
-void set_continent_owner(continent_t* continent, user_t* owner);
 void set_capital(country_t* country);
 
 void move_troops(country_t* country_from, country_t* country_to, uint nb_units);
@@ -69,10 +68,3 @@ uint* attack( country_t* attack, country_t* defense);
 void set_continents_owned(user_t* owner, continent_t* continents[CONTINENT_OWNED_MAX]);
 uint nb_capital_owned(user_t* owner);
 void calcul_gain(user_t* owner);
-
-continent_t create_continent(char name[LENGTH_MAX], uint bonus_troop);
-country_t create_country(char name[LENGTH_MAX], char* p_continent,position_t p_pos);
-user_t create_user(char* name);
-
-void set_position(country_t* country, uint pos_x, uint pos_y);
-void set_connections(country_t* country);
