@@ -4,10 +4,11 @@
 #include <time.h>
 
 #include "risk_model.h"
+#include "risk_view_initialize.h"
 
 bool compare_char(char* char1, char* char2){
   uint i = 0;
-  while(char1+i != "\0"){
+  while(char1+i != '\0'){
     if(char1+i != char2+i){
       return false;
     }
@@ -77,6 +78,14 @@ void loss_troops(country_t* country, uint loss){
   (*country).current_troop -= loss;
 }
 
+bool loss_country(user_t* user, country_t* defense){
+  if((*defense).nb_troops <= 0){
+    set_country_owner(defense, user);
+    return true;
+  }
+  return false;
+}
+
 void set_country_owner(country_t* country, user_t* owner){
   (*owner).nb_country++;
   uint nb_country = (*owner).nb_country;
@@ -103,14 +112,18 @@ void add_stars(user_t* user){
   (*user).nb_stars = (*user).nb_stars + rand() % 2 + 1;
 }
 
-uint* attack_roll(uint attack, uint defense){
+uint* attack_roll(uint attack, uint defense, bool use_boost){
   // attack et defense represente le nombre de troop dans le pays
   uint* attack_roll = NULL;
   uint* defense_roll = NULL;
   // le nb de troop determine le nb de des
   if(attack > 3){
+    if(use_boost)
+      attack_roll = roll_dices(4)
     attack_roll = roll_dices(3);
   }else if(attack <= 3){
+    if(use_boost)
+      attack_roll = roll_dices(attack);
     attack_roll = roll_dices(attack -1);
   }
   // meme chose pour la defense
@@ -132,13 +145,16 @@ uint* attack_roll(uint attack, uint defense){
   return res;
 }
 
-uint* attack( country_t* attack, country_t* defense ){
+uint* attack( country_t* attack, country_t* defense, bool use_boost){
   // simule l'attaque d'un pays de a a z
   uint attack_troop = (*attack).current_troop;
   uint defense_troop = (*defense).current_troop;
-  uint* loss = attack_roll(attack_troop, defense_troop);
+  uint* loss[3] = attack_roll(attack_troop, defense_troop, use_boost);
+  loss[2] = 1;
   loss_troops(attack, loss[1]);
   loss_troops(defense, loss[0]);
+  if(loss_country(attack, defense))
+    loss[2] = 0;
   // retourne le nb de perte pour l'affichage
   return loss;
 }

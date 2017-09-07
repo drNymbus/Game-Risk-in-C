@@ -12,6 +12,7 @@ struct continent_t;
 typedef struct{
   uint pos_x;
   uint pos_y;
+  int pos_curseur;
 } position_t;
 
 typedef struct{
@@ -19,8 +20,8 @@ typedef struct{
   char* owner;
   uint nb_connections;
   struct country_t* connections[NB_CONNECTIONS_MAX];
-  uint current_troop;
-  uint max_troop;
+  int current_troop;
+  int max_troop;
   struct continent_t* continent;//char* continent;
   bool capital;
   position_t position;
@@ -40,9 +41,10 @@ typedef struct{
   country_t* countries[NB_COUNTRY_MAX];
   uint nb_continent;
   continent_t* continents[CONTINENT_OWNED_MAX];
-  uint nb_stars;
+  int nb_stars;
   uint gain;
   char color;
+  bool boost;
 } user_t;
 
 bool compare_char(char* char1, char* char2);
@@ -54,16 +56,17 @@ uint * roll_dices(uint nb_dice);
 
 void add_troops(country_t* country, uint gain);
 void loss_troops(country_t* country, uint loss);
+bool loss_country(country_t* attack, country_t* defense);
 
 void set_country_owner(country_t* country, user_t* owner);
 void set_capital(country_t* country);
 
-void move_troops(country_t* country_from, country_t* country_to, uint nb_units);
+void move_troops(country_t* country_from, country_t* country_to, int nb_units);
 
 void add_stars(user_t* user);
 
 uint* attack_roll(uint attack, uint defense);
-uint* attack( country_t* attack, country_t* defense);
+uint* attack( country_t* attack, country_t* defense, bool use_boost);
 
 void set_continents_owned(user_t* owner, continent_t* continents[CONTINENT_OWNED_MAX]);
 uint nb_capital_owned(user_t* owner);

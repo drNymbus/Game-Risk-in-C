@@ -4,8 +4,7 @@
 #include <time.h>
 
 #include "risk_model.h"
-#include "risk_view.h"
-#include "risk_initializer.h"
+#include "risk_view_intialize.h"
 
 uint coord_to_index(position_t* position){
   //transforme des coordonneesde type position_t en un index
@@ -33,7 +32,7 @@ void print_map(country_t* map[NB_CELLS], position_t* position){
       if(compare_position(position, (*map[i]).position)){
         printf("!");
       }
-      printf("%s", map[i].name);
+      printf("%s%d.%s(%d)%s", (*(*map[i]).owner).color,i , map[i].name, (*map[i]).current_troops, KNRM);
     }if(i%(MAP_X-1) == 0){
       printf("\n");
     }
@@ -44,7 +43,7 @@ void print_map(country_t* map[NB_CELLS], position_t* position){
 void print_menu(state_t* state){
   if((*state).set_turn){
     for(uint i=0; i<4; i++){
-      if((*position).pos_x == i){
+      if((*position).pos_curseur == i){
         printf("!");
       }
       if(i == 0){
@@ -61,7 +60,7 @@ void print_menu(state_t* state){
   }
   if((*state).turn){
     for(uint j=0; j<4; j++){
-      if((*position).pos_x == i){
+      if((*position).pos_curseur == i){
         printf("!");
       }
       if(i == 0){
@@ -113,4 +112,14 @@ void print_instructions(state_t* state){
     printf("\"Move\" to move troops to close country (once per turn)\n");
     printf("\"End\" to finish your turn\n", );
   }
+  printf("\nEnter following this schema \"index <move> nb_troops\".\n");
+  printf("If no need of replace index or/and nb_troops by -1.\n");
+}
+
+void display_game(country_t* map[NB_CELLS], user_t* users[NB_MAX_PLAYERS], uint index_player){
+  position_t position = {0,0,0};
+  print_map(map, &position);
+  print_infos(users[index_player]);
+  print_ranking(users);
+  print_instructions(*p_state);
 }
