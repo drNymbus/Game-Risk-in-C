@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
 #define NB_CONNECTIONS_MAX 6
 #define NB_CONTINENT_MAX 12
 #define NB_COUNTRY_MAX 42
@@ -7,64 +12,72 @@
 #define LENGTH_MAX 30
 
 typedef unsigned int uint;
-struct continent_t;
+//struct continent_t;
+//struct country_t;
+//struct user_t;
 
-typedef struct{
+typedef struct position_t{
   uint pos_x;
   uint pos_y;
+  int pos_curseur;
 } position_t;
 
-typedef struct{
+typedef struct country_t{
   char name[LENGTH_MAX];
-  char* owner;
+  struct user_t* owner;
   uint nb_connections;
   struct country_t* connections[NB_CONNECTIONS_MAX];
-  uint current_troop;
-  uint max_troop;
-  struct continent_t* continent;//char* continent;
+  int current_troop;
+  int max_troop;
+  struct continent_t* continent;
   bool capital;
-  position_t position;
+  position_t* position;
 } country_t;
 
-typedef struct{
+typedef struct continent_t{
   char name[LENGTH_MAX];
-  char* owner;
+  struct user_t* owner;
   uint nb_country;
   country_t* countries[NB_CONTINENT_MAX];
   int bonus_troop;
 } continent_t;
 
-typedef struct{
+typedef struct user_t{
   char* name;
   uint nb_country;
   country_t* countries[NB_COUNTRY_MAX];
   uint nb_continent;
   continent_t* continents[CONTINENT_OWNED_MAX];
-  uint nb_stars;
+  int nb_stars;
   uint gain;
-  char color;
+  char* color;//[LENGTH_MAX];
+  bool boost;
 } user_t;
 
 bool compare_char(char* char1, char* char2);
 void swap(uint tab[],uint i,uint j);
 void sort_array(uint t[],uint size);
 
-uint * roll_dices(uint nb_dice);
+uint* roll_dices(uint nb_dice);
 
 
 void add_troops(country_t* country, uint gain);
 void loss_troops(country_t* country, uint loss);
+bool loss_country(user_t* user, country_t* defense);
 
 void set_country_owner(country_t* country, user_t* owner);
 void set_capital(country_t* country);
 
-void move_troops(country_t* country_from, country_t* country_to, uint nb_units);
+void move_troops(country_t* country_from, country_t* country_to, int nb_units);
 
 void add_stars(user_t* user);
 
-uint* attack_roll(uint attack, uint defense);
-uint* attack( country_t* attack, country_t* defense);
+uint* attack_roll(int attack, int defense, bool use_boost);
+uint* attack( country_t* attack, country_t* defense, bool use_boost);
 
 void set_continents_owned(user_t* owner, continent_t* continents[CONTINENT_OWNED_MAX]);
 uint nb_capital_owned(user_t* owner);
 void calcul_gain(user_t* owner);
+
+void set_position(position_t* position, uint pos_x, uint pos_y);
+bool compare_position(position_t* pos1, position_t* pos2);
