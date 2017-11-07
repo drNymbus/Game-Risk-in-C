@@ -1,54 +1,13 @@
 NB_CONTINENT
-  Europe 7
-Grande-Bretagne
-Islande
-Europe du Nord
-Scandinavie
-Europe du Sud
-Ukraine
-Europe_occidentale
-
-  Asie 12
-Afghanistan
-Chine
-Inde
-Tchita
-Japon
-Kamtchatka
-Moyen-Orient
-Mongolie
-Siam
-Sibérie
-Oural
-Yakoutie
-
-  Amerique_Nord 9
-Alaska
-Alberta
-Amerique_centrale
-Etats_de_l'Est
-Groenland
-Territoires_du_Nord-Ouest
-Ontario
-Quebec
-Etats_de_l'Ouest
-
-  Amerique_Sud 4
-Argentine
-Bresil
-Perou
-Venezuela
-
-  Afrique 6
-Congo
-Afrique_de_l’Est
-Egypte
-Madagascar
-Afrique_du_Nord
-Afrique_du_Sud
-
-  Oceanie 4
-Australie_Orientale
-Indonesie
-Nouvelle-Guinee
-Australie_Occidentale
+Europe 7
+0 1 2 3 4 5 6
+Asie 12
+7 8 9 10 11 12 13 14 15 16 17 18
+Amerique_Nord 9
+19 20 21 22 23 24 25 26 27
+Amerique_Sud 4
+28 29 30 31
+Afrique 6
+32 33 34 35 36 37
+Oceanie 4
+38 39 40 41

@@ -114,10 +114,25 @@ void free_country(country_t* country) {
   country = NULL;
 }
 
+
+
+country_t* id_to_country(country_t* list[], uint nb_country, int id) {
+  for(uint i=0; i < nb_country; i++) {
+    if(list[i]->id == id) {
+      return list[i];
+    }
+  }
+  return NULL;
+}
+
+int get_id(country_t* country) {
+  return country->id;
+}
+
 /*============CONTINENT====================*/
 
 continent_t* continent_alloc() {
-  country_t* countries = (country_t*) malloc(NB_CONTINENT_MAX * sizeof(country_t));
+  int* countries = (int*) malloc(CONTINENT_OWNED_MAX * sizeof(int));
   if(countries == NULL) {
     fprintf(stderr, "Cannot create countries array\n");
     fprintf(stderr, "Cannot allocate memory\n");
@@ -148,7 +163,7 @@ void set_owner_continent(continent_t* continent, user_t* user) {
 
 void country_to_continent(continent_t* continent, country_t* country) {
   continent->nb_country += 1;
-  continent->countries[continent->nb_country - 1] = *country;
+  continent->countries[continent->nb_country - 1] = country->id;
 
   country->continent = continent;
 }
@@ -167,13 +182,14 @@ void free_continent(continent_t* continent) {
 /*=============USER=============*/
 
 user_t* user_alloc() {
-  country_t* countries = (country_t*) malloc(NB_COUNTRY_MAX * sizeof(country_t));
-  continent_t* continents = (continent_t*) malloc(CONTINENT_OWNED_MAX * sizeof(continent_t));
+  int* countries = (int*) malloc(NB_COUNTRY_MAX * sizeof(int));
+  int* continents = (int*) malloc(CONTINENT_OWNED_MAX * sizeof(int));
   if(countries == NULL || continents == NULL) {
     fprintf(stderr, "Cannot create countries and/or continents array\n");
     fprintf(stderr, "Cannot allocate memory\n");
     exit(1);
   }
+
   user_t* user = (user_t*) malloc(sizeof(user_t));
 
   user->countries = countries;
@@ -193,7 +209,7 @@ void set_user_name(user_t* user, char* name) {
 
 void add_country(user_t* user, country_t* country) {
   user->nb_country += 1;
-  user->countries[user->nb_country - 1] = *country;
+  user->countries[user->nb_country - 1] = country->id;
 
   country->owner = user;
 }
@@ -201,7 +217,7 @@ void add_country(user_t* user, country_t* country) {
 void loss_country(user_t* user, country_t* country) {
   for(uint i=0; i < user->nb_country; i++) {
 
-    if(user->countries[i].name == country->name) {
+    if(user->countries[i] == country->id) {
       for(uint j=i; j < user->nb_country; j++){
         user->countries[j] = user->countries[j+1];
       }
@@ -215,13 +231,13 @@ void add_stars(user_t* user, int nb_stars) {//put negative nb_stars to get loss_
   user->nb_stars += nb_stars;
 }
 
-uint calculation_gain(user_t* user) {
-  uint gain = 0;
+void add_calculation_gain(user_t* user, continent_t* continents[]) {
+  uint gain = user->gain;
   for(uint i=0; i < user->nb_continent; i++) {
-    gain += user->continents[i].bonus_troop;
+    gain += continents[user->continents[i]]->bonus_troop;
   }
   gain += user->nb_country / 3;
-  return gain;
+  user->gain = gain;
 }
 
 void set_gain(user_t* user, uint gain) {
@@ -235,8 +251,18 @@ void set_color_user(user_t* user, char* color) {
 void activate_boost(user_t* user, bool boost) {
   if(user->boost == boost) {
     fprintf(stderr, "Boost already %s\n", boost ? "true" : "fasle");
+  } else if(user->nb_stars < 0 && boost) {
+    fprintf(stderr, "Cannot activate boost, not enough stars");
   }
   user->boost = boost;
+}
+
+void apply_boost(user_t* user) {
+  if(!(user->boost)) {
+    fprintf(stderr, "Cannot apply boost");
+    user->gain -= user->nb_stars * 2;
+  }
+  user->gain += user->nb_stars * 2;
 }
 
 void free_user(user_t* user) {

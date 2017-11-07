@@ -9,7 +9,7 @@
 
 #define DECO_CELL_H '-'
 #define DECO_CELL_V '|'
-
+/*
 typedef struct{
   bool initialize;
   bool menu;
@@ -20,18 +20,18 @@ typedef struct{
   bool turn_move;
   bool success;
 }state_t;
-
+*/
 /*==============VIEW======================*/
 
-void print_list_country(country_t* countries[], uint nb_country);
+void print_list_country(country_t* countries, uint nb_country);
+void print_list_continent(continent_t* continents, uint nb_continents);
 
 /*===============INITIALIZER=======================*/
 
-uint find_nb_countries(char* path);
-country_t* create_countries(char* path);
-void create_connnections(country_t* countries[], uint nb_countries);
-uint find_nb_continents(char* path);
-continent_t* create_continents(country_t* countries[], uint nb_countries, char* path);
+uint get_nb_countries(void);
+country_t* create_countries(void);
+uint get_nb_continents(void);
+continent_t* create_continents(country_t* countries, uint nb_countries);
 
 /*==================USER INTERACTION========================*/
 
@@ -39,5 +39,6 @@ uint ask_nb_players(void);
 user_t* ask_users(uint nb_players);
 int ask_troops(void);
 char* ask_instructions(void);
-int* ask_move(void);
-int* ask_attack(void);
+char* ask_move(void);
+int* ask_from_to(void);
+int ask_number(void);

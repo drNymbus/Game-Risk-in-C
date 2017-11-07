@@ -38,16 +38,16 @@ typedef struct continent_t{
   char* name;
   struct user_t* owner;
   uint nb_country;
-  country_t* countries;
+  int* countries;
   int bonus_troop;
 } continent_t;
 
 typedef struct user_t{
   char* name;
   uint nb_country;
-  country_t* countries;
+  int* countries;
   uint nb_continent;
-  continent_t* continents;
+  int* continents;
   int nb_stars;
   uint gain;
   char* color;
@@ -67,6 +67,9 @@ void loss_troops(country_t* country, int nb_troops);
 void set_capital(country_t* country);
 void set_position(country_t* country, position_t* position);
 void free_country(country_t* country);
+
+country_t* id_to_country(country_t* list[], uint nb_country, int id);
+int get_id(country_t* country);
 
 /*============CONTINENT====================*/
 
