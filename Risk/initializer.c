@@ -5,54 +5,48 @@
 
 #include "risk_view_initialize.h"
 
-uint find_nb_countries(char* path){
-  FILE* countries = fopen(path, "r");
-  uint nb_total_countries;
-  fscanf(countries, "%d", &nb_total_countries);
-  fclose(countries);
-  return nb_total_countries;
+/*=======================INIITIALIZE========================*/
+
+uint get_nb_countries() {
+  FILE* f_countries = fopen("./initializer/country.txt", "r");
+  uint nb_countries;
+
+  fscanf(f_countries, "%u\n", &nb_countries);
+
+  fclose(f_countries);
+  return nb_countries;
 }
 
-country_t* create_countries(char* path){
-  FILE* f_countries = fopen(path, "r");
-  uint nb_total_countries;
-  fscanf(f_countries, "%d\n", &nb_total_countries);
-  country_t* countries[nb_total_countries] = malloc(sizeof(country_t));
+country_t* create_countries() {
+
+  uint nb_total_countries = get_nb_countries();
+  country_t* countries[nb_total_countries];
+
+  FILE* f_countries = fopen("./initializer/country.txt", "r");
+  fscanf(f_countries, "\n");
+
   for(uint i=0; i<nb_total_countries; i++){
-    fscanf(f_countries,"%s", (*countries[i]).name);
-    fscanf(f_countries,"%d %d",&(*countries[i]).nb_connections,&(*countries[i]).max_troop);
-    position_t position;
-    fscanf(f_countries,"%d %d",&position.pos_x,&position.pos_y);
-    (*countries[i]).position = &position;
-    for(uint j=0; j<(*countries[i]).nb_connections-1; j++){
-      fscanf(f_countries,"%s",NULL);
+    fscanf(f_countries,"%d %s", &countries[i]->id, countries[i]->name);
+
+    uint x, y;
+    fscanf(f_countries, "%d %d", &x, &y);
+    position_t* position = create_position(x, y);
+    countries[i]->position = &position;
+
+    fscanf(f_countries, "%d", &countries[i]->nb_connections);
+
+    for(uint j=0; j < countries[i]->nb_connections; j++){
+      fscanf(f_countries,"%d", countries[i]->connections[j]);
     }
-    fscanf(f_countries,"%s\n",NULL);
+    fscanf(f_countries,"\n");
   }
+
   fclose(f_countries);
   return countries;
 }
 
-void set_connections(country_t* countries[], uint nb_countries, char* path){
-  FILE* connections = fopen(path, "r");
-  for(uint i=0; i<nb_countries; i++){
-    fscanf(connections, "%s %d %d", NULL,NULL,NULL);
-    fscanf(connections,"%d %d", NULL,NULL);
-    for(uint j=0; j<(*countries[i]).nb_connections; j++){
-      char name_conn[LENGTH_MAX];
-      fscanf(connections, "%s", name_conn);
-      for(uint index_conn; index_conn<nb_countries; index_conn++){
-        if(compare_char((*countries[index_conn]).name, name_conn)){
-          (*countries[i]).connections[j] = countries[index_conn];
-        }
-      }
-    }
-    fscanf(connections, "\n");
-  }
-}
-
-uint find_nb_continents(char* path){
-  FILE* continents = fopen(path, "r");
+uint find_nb_continents(void){
+  FILE* continents = fopen("./initializer/continent.txt", "r");
   uint nb_continents;
   fscanf(continents, "%d\n", &nb_continents);
   return nb_continents;
@@ -78,54 +72,7 @@ continent_t* create_continents(country_t* countries[], uint nb_countries, char* 
   return continent;
 }
 
-void initialize_countries(country_t* countries[], uint nb_countries){
-  for(uint i=0; i<nb_countries; i++){
-    (*countries[i]).owner = NULL;
-    (*countries[i]).current_troop = 0;
-    (*countries[i]).capital = false;
-  }
-}
-
-void initialize_map(country_t* map[NB_CELLS]){
-  country_t* empty_country;
-  (*empty_country).name = {'e','m','p','t','y','\0'};
-  uint i;
-  for(i=0; i<NB_CELLS; i++){
-    map[i] = empty_country;
-  }
-}
-
-void set_bots(user_t* users[NB_MAX_PLAYERS], uint nb_players){
-  for(uint i=0; i<nb_players; i++){
-    (*users[NB_MAX_PLAYERS-i]).name = "BOT";
-  }
-}
-
-void set_colors_to_users(user_t* users[NB_MAX_PLAYERS]){
-  char* colors[NB_MAX_PLAYERS] = {KRED,KGRN,KYEL,KMAG,KCYN};
-  for(uint i=0; i<NB_MAX_PLAYERS; i++){
-    (*users[i]).color = colors[i];
-  }
-}
-
-void set_owner(country_t* country, user_t* owner){
-  (*country).owner = (*owner).name;
-  (*owner).nb_country++;
-  (*owner).countries[(*owner).nb_country-1] = country;
-}
-
-void set_country_to_owner(country_t* countries[], uint nb_countries, user_t* users[NB_MAX_PLAYERS]){
-  for(uint i=0; i<NB_MAX_PLAYERS; i++){
-    for(uint j=0; j<nb_countries/NB_MAX_PLAYERS;){
-      srand(time(NULL));
-      uint index_country = rand()%nb_countries;
-      if((*countries[index_country]).owner != NULL){
-        set_owner(countries[index_country], users[i]);
-        j++;
-      }
-    }
-  }
-}
+/*===================USER INTERACTION=====================*/
 
 uint ask_nb_players(void){
   uint nb_players = NB_MAX_PLAYERS+1;

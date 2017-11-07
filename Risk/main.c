@@ -5,16 +5,13 @@
 //#include "risk_model.h"
 #include "risk_view_initialize.h"
 
-int main(int arg_c, char** arg_v){
+int main(void){
 
   state_t state = {true,false,false,false,false,false,false};
   state_t* p_state = &state;
 
   country_t* map[NB_CELLS];
   initialize_map(map);
-
-  position_t curseur = {0,0,-1};
-  position_t* p_curseur = &curseur;
 
   uint nb_countries;
   country_t* countries[nb_countries];

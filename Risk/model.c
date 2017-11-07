@@ -5,209 +5,243 @@
 
 #include "risk_model.h"
 
-bool compare_char(char* char1, char* char2){
-  uint i = 0;
-  while(char1+i != '\0'){
-    if(char1+i != char2+i){
-      return false;
-    }
-    i++;
+position_t* create_position(uint x, uint y) {
+  position_t* pos = (position_t*) malloc(sizeof(position_t));
+  if(pos == NULL) {
+    fprintf(stderr, "Cannot create position\n");
+    fprintf(stderr, "Cannot allocate memory\n");
+    exit(1);
   }
-  return true;
+  if(y > MAP_Y) {
+    fprintf(stderr, "Invalid parameter y(%d) for position\n", y);
+    exit(1);
+  } else if(x > MAP_X) {
+    fprintf(stderr, "Invalid parameter x(%d) for position\n", x);
+    exit(1);
+  }
+
+  pos->pos_x = x;
+  pos->pos_y = y;
+
+  return pos;
 }
 
-void swap(uint tab[],uint i,uint j){
-  uint tmp = tab[i];
-  tab[i] = tab[j];
-  tab[j] = tmp;
+/*====================COUNTRY=====================*/
+
+country_t* country_alloc() {
+  int* connections = (int*) malloc(NB_CONNECTIONS_MAX * sizeof(int));
+  if(connections == NULL) {
+    fprintf(stderr, "Cannot create connection array\n");
+    fprintf(stderr, "Cannot allocate memory\n");
+    exit(1);
+  }
+
+  country_t* country = (country_t*) malloc(sizeof(country_t*));
+  if(country == NULL) {
+    fprintf(stderr, "Cannot create country\n");
+    fprintf(stderr, "Cannot allocate memory\n");
+    exit(1);
+  }
+
+  country->nb_connections = 0;
+  country->current_troop = 0;
+  country->capital = false;
+  country->continent = NULL;
+  country->position = NULL;
+  country->connections = connections;
+
+  return country;
 }
 
-void sort_array(uint t[],uint size){
-  for(uint i=0; i<size; i++){
-    for(uint j=0; j<size; j++){
-      if( t[i] > t[j]){
-        swap(t,i,j);
+void set_country_name(country_t* country, char* name) {
+  country->name = name;
+}
+
+void set_country_owner(country_t* country, user_t* user) {
+  country->owner = user;
+}
+void connect_countries(country_t* country1, country_t* country2) {
+  country1->nb_connections += 1;
+  country1->connections[country1->nb_connections - 1] = country2->id;
+
+  country2->nb_connections += 1;
+  country2->connections[country2->nb_connections - 1] = country1->id;
+}
+
+void add_troops(country_t* country, int nb_troops) {
+  if(nb_troops < 0) {
+    fprintf(stderr, "Invalid nb_troops\n");
+    exit(1);
+  }
+
+  country->current_troop += nb_troops;
+  if(country->current_troop < 0) {
+    fprintf(stderr, "Too many troops in country\n");
+    exit(1);
+  }
+}
+
+void loss_troops(country_t* country, int nb_troops) {
+  if(nb_troops < 0) {
+    fprintf(stderr, "Invalid nb_troops\n");
+    exit(1);
+  }
+
+  country->current_troop -= nb_troops;
+  if(country->current_troop < 0) {
+    fprintf(stderr, "Too many troops in country\n");
+    exit(1);
+  }
+}
+
+void set_capital(country_t* country) {
+  if(country->capital) {
+    fprintf(stderr, "Country already a capital\n");
+    return;
+  }
+  country->capital = true;
+}
+
+void set_position(country_t* country, position_t* position) {
+  country->position = position;
+}
+
+void free_country(country_t* country) {
+  free(country->connections);
+  country->connections = NULL;
+
+  free(country);
+  country = NULL;
+}
+
+/*============CONTINENT====================*/
+
+continent_t* continent_alloc() {
+  country_t* countries = (country_t*) malloc(NB_CONTINENT_MAX * sizeof(country_t));
+  if(countries == NULL) {
+    fprintf(stderr, "Cannot create countries array\n");
+    fprintf(stderr, "Cannot allocate memory\n");
+    exit(1);
+  }
+
+  continent_t* continent = (continent_t*) malloc(sizeof(continent_t));
+  if(continent == NULL) {
+    fprintf(stderr, "Cannot create continent\n");
+    fprintf(stderr, "Cannot allocate memory\n");
+    exit(1);
+  }
+
+  continent->countries = countries;
+  continent->bonus_troop = 0;
+  continent->nb_country = 0;
+
+  return continent;
+}
+
+void set_continent_name(continent_t* continent, char* name) {
+  continent->name = name;
+}
+
+void set_owner_continent(continent_t* continent, user_t* user) {
+  continent->owner = user;
+}
+
+void country_to_continent(continent_t* continent, country_t* country) {
+  continent->nb_country += 1;
+  continent->countries[continent->nb_country - 1] = *country;
+
+  country->continent = continent;
+}
+
+void set_bonus_troop(continent_t* continent, int bonus_troop) {
+  continent->bonus_troop = bonus_troop;
+}
+
+void free_continent(continent_t* continent) {
+  free(continent->countries);
+  continent->countries = NULL;
+  free(continent);
+  continent = NULL;
+}
+
+/*=============USER=============*/
+
+user_t* user_alloc() {
+  country_t* countries = (country_t*) malloc(NB_COUNTRY_MAX * sizeof(country_t));
+  continent_t* continents = (continent_t*) malloc(CONTINENT_OWNED_MAX * sizeof(continent_t));
+  if(countries == NULL || continents == NULL) {
+    fprintf(stderr, "Cannot create countries and/or continents array\n");
+    fprintf(stderr, "Cannot allocate memory\n");
+    exit(1);
+  }
+  user_t* user = (user_t*) malloc(sizeof(user_t));
+
+  user->countries = countries;
+  user->continents = continents;
+
+  user->nb_country = 0;
+  user->nb_continent = 0;
+  user->nb_stars = 0;
+  user->boost = false;
+
+  return user;
+}
+
+void set_user_name(user_t* user, char* name) {
+  user->name = name;
+}
+
+void add_country(user_t* user, country_t* country) {
+  user->nb_country += 1;
+  user->countries[user->nb_country - 1] = *country;
+
+  country->owner = user;
+}
+
+void loss_country(user_t* user, country_t* country) {
+  for(uint i=0; i < user->nb_country; i++) {
+
+    if(user->countries[i].name == country->name) {
+      for(uint j=i; j < user->nb_country; j++){
+        user->countries[j] = user->countries[j+1];
       }
+      user->nb_country -= 1;
     }
+
   }
 }
 
-uint* roll_dices(uint nb_dice){
-  static uint res[3];
-  for(uint i=0; i<nb_dice; i++){ //simule le lancer de des
-    srand(time(NULL));
-    uint roll = rand()%6 +1;
-    res[i] = roll;
+void add_stars(user_t* user, int nb_stars) {//put negative nb_stars to get loss_stars function
+  user->nb_stars += nb_stars;
+}
+
+uint calculation_gain(user_t* user) {
+  uint gain = 0;
+  for(uint i=0; i < user->nb_continent; i++) {
+    gain += user->continents[i].bonus_troop;
   }
-  if(nb_dice == 3){ // compare les lancers de des
-    if(res[0]<res[2]){ // pour ne garder que les 2 plus grands
-      swap(res,0,2);
-    }
-    if(res[1]<res[2]){
-      swap(res, 1, 2);
-    }
+  gain += user->nb_country / 3;
+  return gain;
+}
+
+void set_gain(user_t* user, uint gain) {
+  user->gain = gain;
+}
+
+void set_color_user(user_t* user, char* color) {
+  user->color = color;
+}
+
+void activate_boost(user_t* user, bool boost) {
+  if(user->boost == boost) {
+    fprintf(stderr, "Boost already %s\n", boost ? "true" : "fasle");
   }
-  return res;
+  user->boost = boost;
 }
 
-void swap_user(user_t* users[NB_MAX_PLAYERS], uint i, uint j){
-  user_t* p_swap = users[i];
-  users[i] = users[j];
-  users[j] = p_swap;
-}
-
-void ranking_struct(user_t* users[NB_MAX_PLAYERS], uint nb_players){
-  // trie les joueurs en fonction du nombre de pays passeder
-  for(uint i=0; i<nb_players; i++){
-    uint j = i;
-    while(NB_MAX_PLAYERS-j > 0){
-      if((*users[j]).nb_country > (*users[j-1]).nb_country){
-        swap_user(users, j, j-1);
-        j--;
-      }
-    }
-  }
-}
-
-void add_troops(country_t* country, uint gain){
-  (*country).current_troop += gain;
-}
-
-void loss_troops(country_t* country, uint loss){
-  (*country).current_troop -= loss;
-}
-
-bool loss_country(user_t* user, country_t* defense){
-  if((*defense).current_troop <= 0){
-    set_country_owner(defense, user);
-    return true;
-  }
-  return false;
-}
-
-void set_country_owner(country_t* country, user_t* owner){
-  (*owner).nb_country++;
-  uint nb_country = (*owner).nb_country;
-  (*owner).countries[nb_country-1] = country;
-  //char name_owner = (*owner).name;
-  (*country).owner = owner;
-}
-
-void set_capital(country_t* country){
-  (*country).capital = true;
-}
-
-void move_troops(country_t* country_from, country_t* country_to, int nb_units){
-  add_troops(country_to, nb_units);
-  loss_troops(country_from, nb_units);
-  if((*country_from).current_troop == 0){
-    add_troops(country_from, nb_units);
-    loss_troops(country_to, nb_units);
-  }
-}
-
-void add_stars(user_t* user){
-  srand(time(NULL));
-  (*user).nb_stars = (*user).nb_stars + rand() % 2 + 1;
-}
-
-uint* attack_roll(int attack, int defense, bool use_boost){
-  // parametres attack et defense represente le nombre de troop dans le pays
-  uint* att_roll = NULL;
-  uint* defense_roll = NULL;
-  // le nb de troop determine le nb de des
-  if(attack > 3){
-    if(use_boost)
-      att_roll = roll_dices(4);
-    att_roll = roll_dices(3);
-  }else if(attack <= 3){
-    if(use_boost)
-      att_roll = roll_dices(attack);
-    att_roll = roll_dices(attack -1);
-  }
-  // meme chose pour la defense
-  if(defense > 2){
-    defense_roll = roll_dices(2);
-  }else{
-    defense_roll = roll_dices(1);
-  }
-  static uint res[3] = {0,0,0};
-  for(uint i=0; i<2; i++){ // compare les lancers de des
-    if(att_roll[i] > defense_roll[i]){
-      res[0]++;
-    }else{
-      res[1]++;
-    }
-  }
-  // res[0] = nb de mort en defense
-  // res[1] = nb de mort en attaque
-  return res;
-}
-
-uint* attack(country_t* attack, country_t* defense, bool use_boost){
-  // simule l'attaque d'un pays de a a z
-  uint attack_troop = (*attack).current_troop;
-  uint defense_troop = (*defense).current_troop;
-  uint* loss = attack_roll(attack_troop, defense_troop, use_boost);
-  loss[2] = 1;
-  loss_troops(attack, loss[1]);
-  loss_troops(defense, loss[0]);
-  if(loss_country((*attack).owner, defense))
-    loss[2] = 0;
-  // retourne le nb de perte pour l'affichage
-  return loss;
-}
-
-void set_continents_owned(user_t* owner, continent_t* continents[CONTINENT_OWNED_MAX]){
-  for(uint i=0; i<CONTINENT_OWNED_MAX; i++){
-    char* continent_name = (*continents[i]).name;
-    uint cmpt_country = 0;
-    for(uint j=0; j<(*owner).nb_country; j++){
-      country_t* country = (*owner).countries[j];
-      if(compare_char((*(*country).continent).name, continent_name)){
-        cmpt_country++;
-      }
-    }
-    if(cmpt_country == (*continents[i]).nb_country){
-      (*continents[i]).owner = owner;
-      (*owner).nb_continent++;
-      (*owner).continents[(*owner).nb_continent -1] = continents[i];
-    }
-  }
-}
-
-uint nb_capital_owned(user_t* owner){
-  uint nb_cap =  0;
-  for(uint i=0; i<(*owner).nb_country; i++){
-    if((*(*owner).countries[i]).capital){
-      nb_cap++;
-    }
-  }
-  return nb_cap;
-}
-
-void calcul_gain(user_t* owner){
-  uint gain = 0, nb_country = (*owner).nb_country;
-  gain = nb_country/3;
-  if((*owner).nb_continent != 0)
-    for(uint i=0; i<(*owner).nb_continent; i++){
-      continent_t* continent = (*owner).continents[i];
-      gain = gain + (*continent).bonus_troop;
-    }
-  gain = gain + nb_capital_owned(owner);
-  (*owner).gain = gain;
-}
-
-void set_position(position_t* position, uint pos_x, uint pos_y){
-  (*position).pos_x = pos_x;
-  (*position).pos_y = pos_y;
-}
-
-bool compare_position(position_t* pos1, position_t* pos2){
-  if((*pos1).pos_x != (*pos2).pos_x){
-    return false;
-  }else if((*pos1).pos_y != (*pos2).pos_y){
-    return false;
-  }
-  return true;
+void free_user(user_t* user) {
+  free(user->countries);
+  free(user->continents);
+  free(user);
+  user = NULL;
 }
