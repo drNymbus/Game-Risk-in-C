@@ -53,6 +53,10 @@ country_t* country_alloc() {
   return country;
 }
 
+void set_country_id(country_t* country, int id) {
+  country->id = id;
+}
+
 void set_country_name(country_t* country, char* name) {
   country->name = name;
 }
@@ -60,12 +64,21 @@ void set_country_name(country_t* country, char* name) {
 void set_country_owner(country_t* country, user_t* user) {
   country->owner = user;
 }
-void connect_countries(country_t* country1, country_t* country2) {
-  country1->nb_connections += 1;
-  country1->connections[country1->nb_connections - 1] = country2->id;
 
-  country2->nb_connections += 1;
-  country2->connections[country2->nb_connections - 1] = country1->id;
+void set_nb_connections(country_t* country, uint nb_connections) {
+  country->nb_connections = nb_connections;
+}
+
+void connect_countries_id(country_t* country1, int id) {
+  country1->connections[country1->nb_connections - 1] = id;
+}
+
+void connect_countries(country_t* country1, country_t* country2) {
+  int conn = country1->nb_connections++;
+  country1->connections[conn] = country2->id;
+
+  conn = country2->nb_connections++;
+  country2->connections[conn] = country1->id;
 }
 
 void add_troops(country_t* country, int nb_troops) {
@@ -127,6 +140,10 @@ country_t* id_to_country(country_t* list[], uint nb_country, int id) {
 
 int get_id(country_t* country) {
   return country->id;
+}
+
+int* get_connections(country_t* country) {
+  return country->connections;
 }
 
 /*============CONTINENT====================*/

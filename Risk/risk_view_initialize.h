@@ -1,5 +1,5 @@
 #include "risk_model.h"
-
+/*
 #define KNRM  "\x1B[0m"
 #define KRED  "\x1B[31m"
 #define KGRN  "\x1B[32m"
@@ -9,7 +9,7 @@
 
 #define DECO_CELL_H '-'
 #define DECO_CELL_V '|'
-/*
+
 typedef struct{
   bool initialize;
   bool menu;
@@ -21,19 +21,22 @@ typedef struct{
   bool success;
 }state_t;
 */
-/*==============VIEW======================*/
+/*=========================VIEW============================*/
 
 void print_list_country(country_t* countries, uint nb_country);
 void print_list_continent(continent_t* continents, uint nb_continents);
 
-/*===============INITIALIZER=======================*/
+/*======================INITIALIZER========================*/
 
 uint get_nb_countries(void);
 country_t* create_countries(void);
 uint get_nb_continents(void);
 continent_t* create_continents(country_t* countries, uint nb_countries);
 
-/*==================USER INTERACTION========================*/
+country_t* free_all_countries(country_t* countries, uint nb_countries);
+continent_t* free_all_continents(continent_t* continents, uint nb_continents);
+
+/*===================USER INTERACTION=======================
 
 uint ask_nb_players(void);
 user_t* ask_users(uint nb_players);
@@ -42,3 +45,4 @@ char* ask_instructions(void);
 char* ask_move(void);
 int* ask_from_to(void);
 int ask_number(void);
+*/
