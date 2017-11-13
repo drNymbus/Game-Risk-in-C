@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.H>
+#include <stdlib.h>
 #include <stdbool.h>
 
 //#include "risk_model.h"
