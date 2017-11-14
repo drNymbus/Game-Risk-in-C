@@ -70,10 +70,6 @@ void set_capital(country_t* country);
 void set_position(country_t* country, position_t* position);
 void free_country(country_t* country);
 
-country_t* id_to_country(country_t* list[], uint nb_country, int id);
-int get_id(country_t* country);
-int* get_connections(country_t* country);
-
 /*============CONTINENT====================*/
 
 continent_t* continent_alloc();

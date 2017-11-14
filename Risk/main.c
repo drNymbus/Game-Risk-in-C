@@ -19,11 +19,11 @@ int main(void){
     nb_countries = get_nb_countries();
     printf("Number of countries : %d\n", nb_countries);
     countries = create_countries();
-    printf("\n\n");
+    printf("\n\n\t==================END===================\n\n");
 
     printf("List of countries:\n");
     print_list_country(countries, nb_countries);
-    printf("\n\n");
+    printf("\n====================================\n");
 
     nb_continents = get_nb_continents();
     printf("Number of continents: %d\n", nb_continents);
@@ -32,7 +32,7 @@ int main(void){
     continents = create_continents(countries, nb_countries);
     printf("List of continent:\n");
     print_list_continent(continents, nb_continents);
-    printf("\n\n");
+    printf("\n\n\t==================END===================\n\n");
 
 /*  nb_players = ask_nb_players();
   users[nb_players] = ask_users(nb_players);

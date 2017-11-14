@@ -43,8 +43,8 @@ country_t* create_countries(void) {
         exit(1);
     }
 
-    for(uint i=0; i<nb_total_countries; i++){
-        int line=i+2;
+    for(uint id=0; id < nb_total_countries; id++){
+        int line=id+2;
 
         country_t* country = country_alloc();
 
@@ -54,28 +54,34 @@ country_t* create_countries(void) {
             exit(1);
         }
         //set id and name  to country
-        printf("Scanning info country...\n");
+        printf("Scanning info country...\t");
         c = fscanf(f_countries,"%s", name);
-        if(c != 2) {
-            fprintf(stderr, "Initialier file country.txt corrompt id name (%d,%s)", country->id, country->name);
+        if(c != 1) {
+            fprintf(stderr, "Initialier file country.txt corrompt id name (%d,%s)", id, name);
             fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
-        set_country_id(country, i);
+        printf("Country is %s \n\n", name);
+
+        set_country_id(country, id);
         set_country_name(country, name);
+
         //set position to country
-        printf("Scanning position...\n");
+        printf("Scanning position...\t");
         uint x, y;
         c = fscanf(f_countries, "%d %d", &x, &y);
         if(c != 2) {
             fprintf(stderr, "Initialier file country.txt corrompt pos(%d,%d)\n", x, y);
-            fprintf(stderr, "...line(%d)\n", i+line);
+            fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
+        printf("pos confirmed : %d, %d \n\n", x ,y);
+
         position_t* position = create_position(x, y);
         set_position(country, position);
+
         //set number of connections
-        printf("Scanning nb_connections...\n");
+        printf("Scanning nb_connections...\t");
         uint nb_connections;
         c = fscanf(f_countries, "%d", &nb_connections);
         if(c != 1) {
@@ -83,10 +89,14 @@ country_t* create_countries(void) {
             fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
+        printf("Nb connections %d | ", nb_connections);
+
         set_nb_connections(country, nb_connections);
+        printf("Nb_connections now linked \n\n");
+
         //set connections from id
         for(uint j=0; j < country->nb_connections; j++){
-            printf("\trange(%u) | Scanning id_conn n°%d, line:%d\n", country->nb_connections, j+1, line);
+            printf("\trange(%d) | Scanning id_conn n°%d, line:%d", nb_connections, j+1, line);
             int id_conn;
             c = fscanf(f_countries,"%d", &id_conn);
             if(c != 1) {
@@ -94,9 +104,13 @@ country_t* create_countries(void) {
                 fprintf(stderr, "...line(%d)\n", line);
                 exit(1);
             }
+            printf("...OK | ");
+
             connect_countries_id(country, id_conn);
+            printf("country connected OK\n");
         }
-        countries[i] = *country;
+        countries[id] = *country;
+        printf("country connect to countries list\n\t===============\n");
 
     }
 
