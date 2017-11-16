@@ -31,7 +31,7 @@ void print_list_continent(continent_t* continents, uint nb_continents);
 uint get_nb_countries(void);
 country_t* create_countries(void);
 uint get_nb_continents(void);
-continent_t* create_continents(country_t* countries, uint nb_countries);
+continent_t* create_continents(country_t* countries);
 
 country_t* free_all_countries(country_t* countries, uint nb_countries);
 continent_t* free_all_continents(continent_t* continents, uint nb_continents);

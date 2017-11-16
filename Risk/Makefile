@@ -1,5 +1,4 @@
-CFLAGS = -O3 -Wall -std=c99
-GDB = -g
+CFLAGS = -g -O3 -Wall -Werror -std=c99
 SOURCES = $(wildcard *.c)
 OBJ = $(SOURCES:.c=.o)
 
@@ -11,7 +10,7 @@ view.o : view.c risk_view_initialize.h
 main.o : main.c risk_model.h risk_view_initialize.h
 
 Risk : $(OBJ)
-	$(CC) $(GDB) $(CFLAGS) $(OBJ) -o Risk
+	$(CC) $(CFLAGS) $(OBJ) -o Risk
 
 .PHONY = clean
 clean :

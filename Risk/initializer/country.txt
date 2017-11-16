@@ -26,14 +26,14 @@ Groenland 0 0 4 1 24 25 26
 Territoires_du_Nord_Ouest 0 0 4 19 20 25 23
 Ontario 0 0 6 23 24 26 22 27 20
 Quebec 0 0 3 25 23 22
-Etats_de_l_Ouest 0 0 3 20 22 21 25
+Etats_de_l_Ouest 0 0 4 20 22 21 25
 Argentine 0 0 2 29 30
 Bresil 0 0 4 28 30 31 36
 Perou 0 0 3 28 29 31
 Venezuela 0 0 3 21 30 29
-Congo 0 0 3 33 35 36 37
-Afrique_de_l_Est 0 0 6 32 34 35 37 7
-Egypte 0 0 5 33 36 4 7
+Congo 0 0 4 33 35 36 37
+Afrique_de_l_Est 0 0 5 32 34 35 37 7
+Egypte 0 0 4 33 36 4 7
 Madagascar 0 0 2 33 37
 Afrique_du_Nord 0 0 5 29 32 33 34 6
 Afrique_du_Sud 0 0 3 32 33 35
