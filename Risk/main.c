@@ -24,7 +24,7 @@ int main(void){
     printf("List of countries:\n");
     print_list_country(countries, nb_countries);
 
-    printf("\n==========================================================================\n");
+    printf("\n==========================================================================\n\n");
 
     nb_continents = get_nb_continents();
     printf("Number of continents: %d\n", nb_continents);

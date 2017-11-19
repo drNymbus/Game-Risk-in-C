@@ -143,7 +143,7 @@ int* get_connections(country_t* country) {
     return country->connections;
 }
 
-/*============CONTINENT====================*/
+/*================================CONTINENT===================================*/
 
 continent_t* continent_alloc(void) {
     int* countries = (int*) malloc(CONTINENT_OWNED_MAX * sizeof(int));
@@ -165,6 +165,10 @@ continent_t* continent_alloc(void) {
     continent->nb_country = 0;
 
     return continent;
+}
+
+void set_id_continent(continent_t* continent, int id) {
+    continent->id = id;
 }
 
 void set_continent_name(continent_t* continent, char* name) {

@@ -1,4 +1,4 @@
-CFLAGS = -g -O3 -Wall -Werror -std=c99
+CFLAGS = -std=c99 -g -O3 -Wall -Werror
 SOURCES = $(wildcard *.c)
 OBJ = $(SOURCES:.c=.o)
 

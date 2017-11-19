@@ -100,6 +100,7 @@ country_t* create_countries(void) {
 
         countries[id] = *country;
     }
+    fprintf(stdout, "\n\tAll countries created...\n\n");
 
     fclose(f_countries);
     return countries;
@@ -142,14 +143,14 @@ continent_t* create_continents(country_t* countries) {
         char* name = malloc(sizeof(char) * LENGTH_MAX);
         if(name == NULL) {
             fprintf(stderr, "Cannot allocate memory ");
-            fprintf(stderr, "for name country n°%u \n", i + 1);
+            fprintf(stderr, "for name continent n°%u \n", i + 1);
             exit(1);
         }
         uint nb_country;
 
         c = fscanf(f_continents, "%s %d", name, &nb_country);
         if(c != 2) {
-            fprintf(stderr, "Initialier file country.txt corrompt\n");
+            fprintf(stderr, "Initialier file continent.txt corrompt\n");
             exit(1);
         }
         set_continent_name(continent, name);
@@ -158,7 +159,7 @@ continent_t* create_continents(country_t* countries) {
             int id;
             c = fscanf(f_continents, "%d", &id);
             if(c != 1) {
-                fprintf(stderr, "Initialier file country.txt corrompt\n");
+                fprintf(stderr, "Initialier file continent.txt corrompt\n");
                 exit(1);
             }
             country_id_to_continent(continent, id);
@@ -167,6 +168,7 @@ continent_t* create_continents(country_t* countries) {
 
         continents[i] = *continent;
     }
+    fprintf(stdout, "\n\tAll continents created...\n\n");
 
     fclose(f_continents);
     return continents;

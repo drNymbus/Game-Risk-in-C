@@ -77,6 +77,7 @@ int* get_connections(country_t* country);
 /*============CONTINENT====================*/
 
 continent_t* continent_alloc(void);
+void set_id_continent(continent_t* continent, int id);
 void set_continent_name(continent_t* continent, char* name);
 void set_owner_continent(continent_t* continent, user_t* user);
 void set_nb_countries(continent_t* continent, uint nb_connections);
