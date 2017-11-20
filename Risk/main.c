@@ -15,7 +15,6 @@ int main(void){
 
     user_t* users;
     uint nb_players;
-
     
 
     free(countries);
