@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <time.h>
 
 #include "risk_model.h"
 //#include "risk_view_initialize.h"
@@ -305,5 +304,4 @@ void free_user(user_t* user) {
     free(user->countries);
     free(user->continents);
     free(user);
-    user = NULL;
 }

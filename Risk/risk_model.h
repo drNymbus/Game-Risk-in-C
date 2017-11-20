@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #define NB_CONNECTIONS_MAX 6
 #define NB_COUNTRY_MAX 42
 

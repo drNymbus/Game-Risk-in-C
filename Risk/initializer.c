@@ -189,5 +189,3 @@ continent_t* free_all_continents(continent_t* continents, uint nb_continents) {
     }
     return NULL;
 }
-
-/*===================USER INTERACTION=====================*/
