@@ -175,14 +175,16 @@ continent_t* create_continents(country_t* countries) {
 }
 
 country_t* free_all_countries(country_t* countries, uint nb_countries) {
-    for(uint i=nb_countries; i > 0; i--) {
+    for(uint i=0; i < nb_countries; i++) {
+        fprintf(stdout, "Free -> %s \n", countries[i].name);
         free_country(&countries[i]);
     }
     return NULL;
 }
 
 continent_t* free_all_continents(continent_t* continents, uint nb_continents) {
-    for(uint i=nb_continents; i > 0; i--) {
+    for(uint i=0; i < nb_continents; i++) {
+        fprintf(stderr, "Free -> %s \n", continents[i].name);
         free_continent(&continents[i]);
     }
     return NULL;

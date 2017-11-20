@@ -44,12 +44,15 @@ country_t* country_alloc(void) {
         exit(1);
     }
 
-    country->nb_connections = 0;
-    country->current_troop = 0;
-    country->capital = false;
-    country->continent = NULL;
-    country->position = NULL;
     country->connections = connections;
+    country->nb_connections = 0;
+
+    country->current_troop = 0;
+    country->continent = -1;
+
+    country->capital = false;
+    country->position = NULL;
+    country->owner = NULL;
 
     return country;
 }
@@ -110,15 +113,15 @@ void loss_troops(country_t* country, int nb_troops) {
 }
 
 void set_continent(country_t* country, continent_t* continent) {
-    country->continent = continent;
+    country->continent = continent->id;
 }
 
-void set_capital(country_t* country) {
+void set_capital(country_t* country, bool is) {
     if(country->capital) {
         fprintf(stderr, "Country already a capital\n");
         return;
     }
-    country->capital = true;
+    country->capital = is;
 }
 
 void set_position(country_t* country, position_t* position) {
@@ -126,11 +129,10 @@ void set_position(country_t* country, position_t* position) {
 }
 
 void free_country(country_t* country) {
+    free(country->name);
     free(country->connections);
-    country->connections = NULL;
 
     free(country);
-    country = NULL;
 }
 
 
@@ -146,7 +148,7 @@ int* get_connections(country_t* country) {
 /*================================CONTINENT===================================*/
 
 continent_t* continent_alloc(void) {
-    int* countries = (int*) malloc(CONTINENT_OWNED_MAX * sizeof(int));
+    int* countries = (int*) malloc(NB_CONTINENT_MAX * sizeof(int));
     if(countries == NULL) {
         fprintf(stderr, "Cannot create countries array\n");
         fprintf(stderr, "Cannot allocate memory\n");
@@ -161,8 +163,11 @@ continent_t* continent_alloc(void) {
     }
 
     continent->countries = countries;
-    continent->bonus_troop = 0;
-    continent->nb_country = 0;
+    continent->nb_country=0;
+
+    continent->bonus_troop=0;
+    continent->owner=NULL;
+    continent->name =NULL;
 
     return continent;
 }
@@ -193,13 +198,13 @@ void set_bonus_troop(continent_t* continent, int bonus_troop) {
 }
 
 void free_continent(continent_t* continent) {
+    free(continent->name);
     free(continent->countries);
-    continent->countries = NULL;
+
     free(continent);
-    continent = NULL;
 }
 
-/*=============USER=============*/
+/*===========================================USER=========================================*/
 
 user_t* user_alloc(void) {
     int* countries = (int*) malloc(NB_COUNTRY_MAX * sizeof(int));
@@ -211,14 +216,21 @@ user_t* user_alloc(void) {
     }
 
     user_t* user = (user_t*) malloc(sizeof(user_t));
+    if(user == NULL) {
+        fprintf(stderr, "Cannot allocate memory\n");
+        exit(1);
+    }
 
     user->countries = countries;
     user->continents = continents;
 
-    user->nb_country = 0;
-    user->nb_continent = 0;
-    user->nb_stars = 0;
-    user->boost = false;
+    user->nb_country=0;
+    user->nb_continent=0;
+    user->nb_stars=0;
+    user->gain=0;
+
+    user->color=NULL;
+    user->name =NULL;
 
     return user;
 }

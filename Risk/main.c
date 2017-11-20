@@ -38,8 +38,7 @@ int main(void){
 /*  nb_players = ask_nb_players();
   users[nb_players] = ask_users(nb_players);
 */
-
-    free_all_countries(countries, nb_countries);
     free_all_continents(continents, nb_continents);
+    free_all_countries(countries, nb_countries);
     return EXIT_SUCCESS;
 }

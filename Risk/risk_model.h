@@ -24,11 +24,11 @@ typedef struct position_t{
 typedef struct country_t{
     int id;
     char* name;
-    struct user_t* owner;
+    struct user_t* owner;//ID
     uint nb_connections;
     int* connections;
     int current_troop;
-    struct continent_t* continent;
+    int continent;
     bool capital;
     position_t* position;
 } country_t;
@@ -36,7 +36,7 @@ typedef struct country_t{
 typedef struct continent_t{
     int id;
     char* name;
-    struct user_t* owner;
+    struct user_t* owner;//ID
     uint nb_country;
     int* countries;
     int bonus_troop;
@@ -67,7 +67,7 @@ void connect_countries_id(country_t* country1, int id);
 void add_troops(country_t* country, int nb_troops);
 void loss_troops(country_t* country, int nb_troops);
 void set_continent(country_t* country, continent_t* continent);
-void set_capital(country_t* country);
+void set_capital(country_t* country, bool is);
 void set_position(country_t* country, position_t* position);
 void free_country(country_t* country);
 
