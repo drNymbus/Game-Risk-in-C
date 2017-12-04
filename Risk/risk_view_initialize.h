@@ -10,33 +10,28 @@
 #define DECO_CELL_H '-'
 #define DECO_CELL_V '|'
 */
-typedef struct{
-  bool initialize;
-  bool set_board;
-  bool set_turn;
-  bool turn;
-  bool end_turn;
-}state_t;
 
 /*=========================VIEW============================*/
 
-void print_list_country(country_t* countries, uint nb_country);
-void print_list_continent(continent_t* continents, uint nb_continents);
+void print_empty_country(void);
+void print_country(country_t*country);
+void print_continent(continent_t* continent);
+void print_grid(continent_t** continents, uint nb_continents, country_t** countries);
 
 /*======================INITIALIZER========================*/
 
 uint get_nb_countries(void);
-country_t* create_countries(void);
+country_t** create_countries(void);
 uint get_nb_continents(void);
-continent_t* create_continents(country_t* countries);
+continent_t** create_continents(country_t** countries);
 
-country_t* free_all_countries(country_t* countries, uint nb_countries);
-continent_t* free_all_continents(continent_t* continents, uint nb_continents);
+void free_all_countries(country_t** countries, uint nb_countries);
+void free_all_continents(continent_t** continents, uint nb_continents);
 
 /*===================USER INTERACTION=======================*/
 
 uint ask_nb_players(void);
-user_t* ask_users(uint nb_players);
+user_t** ask_users(uint nb_players);
 int ask_troops(void);
 char* ask_move(void);
 int* ask_from_to(void);

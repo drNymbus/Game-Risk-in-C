@@ -22,7 +22,7 @@ uint get_nb_countries(void) {
     return nb_countries;
 }
 
-country_t* create_countries(void) {
+country_t** create_countries(void) {
 
     uint nb_total_countries=0;
     FILE* f_countries = fopen("./initializer/country.txt", "r");
@@ -34,7 +34,7 @@ country_t* create_countries(void) {
         exit(1);
     }
 
-    country_t* countries = (country_t*) malloc(nb_total_countries * sizeof(country_t));
+    country_t** countries = malloc(nb_total_countries * sizeof(country_t*));
     if(countries == NULL) {
         fprintf(stderr, "Cannot create all countries\n");
         fprintf(stderr, "Cannot allocate memory\n");
@@ -59,9 +59,8 @@ country_t* create_countries(void) {
             fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
-
-        set_country_id(country, id);
-        set_country_name(country, name);
+        country->id  = id;
+        country->name= name;
 
         //set position to country
         uint x, y;
@@ -71,9 +70,8 @@ country_t* create_countries(void) {
             fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
-
         position_t* position = create_position(x, y);
-        set_position(country, position);
+        country->position = position;
 
         //set number of connections
         uint nb_connections;
@@ -94,13 +92,12 @@ country_t* create_countries(void) {
                 exit(1);
             }
 
-            connect_countries_id(country, id_conn);
+            country->nb_connections++;
+            country->connections[j] = id_conn;
         }
-        set_nb_connections(country, nb_connections);
 
-        countries[id] = *country;
+        countries[id] = country;
     }
-    fprintf(stdout, "\n\tAll countries created...\n\n");
 
     fclose(f_countries);
     return countries;
@@ -120,7 +117,7 @@ uint get_nb_continents(void) {
     return nb_continents;
 }
 
-continent_t* create_continents(country_t* countries) {
+continent_t** create_continents(country_t** countries) {
 
     FILE* f_continents = fopen("./initializer/continent.txt", "r");
     uint nb_continents;
@@ -130,7 +127,7 @@ continent_t* create_continents(country_t* countries) {
         exit(1);
     }
 
-    continent_t* continents = (continent_t*) malloc(nb_continents * sizeof(continent_t));
+    continent_t** continents = malloc(nb_continents * sizeof(continent_t*));
     if(countries == NULL) {
         fprintf(stderr, "Cannot create all countries\n");
         fprintf(stderr, "Cannot allocate memory\n");
@@ -153,7 +150,7 @@ continent_t* create_continents(country_t* countries) {
             fprintf(stderr, "Initialier file continent.txt corrompt\n");
             exit(1);
         }
-        set_continent_name(continent, name);
+        continent->name = name;
 
         for(uint j=0; j < nb_country; j++){
             int id;
@@ -162,30 +159,27 @@ continent_t* create_continents(country_t* countries) {
                 fprintf(stderr, "Initialier file continent.txt corrompt\n");
                 exit(1);
             }
-            country_id_to_continent(continent, id);
-            set_continent(&countries[id], continent);
+            continent->nb_country++;
+            continent->countries[j] = id;
+
+            countries[id]->continent = continent->id;
         }
 
-        continents[i] = *continent;
+        continents[i] = continent;
     }
-    fprintf(stdout, "\n\tAll continents created...\n\n");
 
     fclose(f_continents);
     return continents;
 }
 
-country_t* free_all_countries(country_t* countries, uint nb_countries) {
+void free_all_countries(country_t** countries, uint nb_countries) {
     for(uint i=0; i < nb_countries; i++) {
-        fprintf(stdout, "Free -> %s \n", countries[i].name);
-        free_country(&countries[i]);
+        free_country(countries[i]);
     }
-    return NULL;
 }
 
-continent_t* free_all_continents(continent_t* continents, uint nb_continents) {
+void free_all_continents(continent_t** continents, uint nb_continents) {
     for(uint i=0; i < nb_continents; i++) {
-        fprintf(stderr, "Free -> %s \n", continents[i].name);
-        free_continent(&continents[i]);
+        free_continent(continents[i]);
     }
-    return NULL;
 }

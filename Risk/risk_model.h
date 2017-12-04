@@ -18,6 +18,16 @@
 
 typedef unsigned int uint;
 
+typedef struct{
+    bool end_game;
+    bool initialize;
+    bool set_board;
+    bool set_turn;
+    bool turn;
+    bool end_turn;
+}state_t;
+
+
 typedef struct position_t{
     uint pos_x;
     uint pos_y;
@@ -56,46 +66,33 @@ typedef struct user_t{
     bool boost;
 } user_t;
 
+void initilize_state(state_t* state);
+
 position_t* create_position(uint x, uint y);
 
 /*====================COUNTRY=====================*/
 
 country_t* country_alloc(void);
-void set_country_id(country_t* country, int id);
-void set_country_name(country_t* country, char* name);
-void set_country_owner(country_t* country, user_t* user);
-void set_nb_connections(country_t* country, uint nb_connections);
-void connect_countries_id(country_t* country1, int id);
-void add_troops(country_t* country, int nb_troops);
-void loss_troops(country_t* country, int nb_troops);
-void set_continent(country_t* country, continent_t* continent);
-void set_capital(country_t* country, bool is);
-void set_position(country_t* country, position_t* position);
 void free_country(country_t* country);
 
-int get_id(country_t* country);
-int* get_connections(country_t* country);
+void connect_countries(country_t* country1, country_t* country2);
+
+void add_troops(country_t* country, int nb_troops);
+void loss_troops(country_t* country, int nb_troops);
 
 /*============CONTINENT====================*/
 
 continent_t* continent_alloc(void);
-void set_id_continent(continent_t* continent, int id);
-void set_continent_name(continent_t* continent, char* name);
-void set_owner_continent(continent_t* continent, user_t* user);
-void set_nb_countries(continent_t* continent, uint nb_connections);
-void country_id_to_continent(continent_t* continent, int id);
-void set_bonus_troop(continent_t* continent, int bonus_troops);
 void free_continent(continent_t* continent);
 
 /*=============USER=============*/
 
 user_t* user_alloc(void);
-void set_user_name(user_t* user, char* name);
+void free_user(user_t* user);
+
 void add_country(user_t* user, country_t* country);
 void loss_country(user_t* user, country_t* country);
+
 void add_stars(user_t* user, int nb_stars);
 uint calculation_gain(user_t* user);
-void set_gain(user_t* user, uint gain);
-void set_color_user(user_t* user, char* color);
 void activate_boost(user_t* user, bool boost);
-void free_user(user_t* user);
