@@ -5,26 +5,27 @@
 
 #include "risk_view_initialize.h"
 
-/*=======================INIITIALIZE========================*/
-
 uint get_nb_countries(void) {
     FILE* f_countries = fopen("./initializer/country.txt", "r");
+    if (f_countries == NULL) {
+        perror("Error");
+        exit(1);
+    }
     uint nb_countries;
 
     int c = fscanf(f_countries, "%u", &nb_countries);
     if(c != 1) {
-        fprintf(stderr, "Initialier file country.txt corrompt (%u)\n", nb_countries);
+        fprintf(stderr, "Initializer file country.txt corrupt (%u)\n", nb_countries);
         exit(1);
     }
-
 
     fclose(f_countries);
     return nb_countries;
 }
 
-country_t** create_countries(void) {
+void create_countries(country_t** countries) {
 
-    uint nb_total_countries=0;
+    uint nb_total_countries;
     FILE* f_countries = fopen("./initializer/country.txt", "r");
 
     int c = fscanf(f_countries, "%u", &nb_total_countries);
@@ -34,39 +35,28 @@ country_t** create_countries(void) {
         exit(1);
     }
 
-    country_t** countries = malloc(nb_total_countries * sizeof(country_t*));
-    if(countries == NULL) {
-        fprintf(stderr, "Cannot create all countries\n");
-        fprintf(stderr, "Cannot allocate memory\n");
-        exit(1);
-    }
-
     for(uint id=0; id < nb_total_countries; id++){
         int line=id+2;
 
         country_t* country = country_alloc();
 
-        char* name = malloc(sizeof(char)*LENGTH_MAX);
-        if(name == NULL) {
-            fprintf(stderr, "Cannot allocate memory for name\n");
-            exit(1);
-        }
-
+        char name[LENGTH_MAX];
         //set id and name  to country
         c = fscanf(f_countries,"%s", name);
         if(c != 1) {
-            fprintf(stderr, "Initialier file country.txt corrompt id name (%s)", name);
+            fprintf(stderr, "Initializer file country.txt corrupt id name (%s)", name);
             fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
         country->id  = id;
+        //printf("%s \n", name);
         country->name= name;
 
         //set position to country
         uint x, y;
         c = fscanf(f_countries, "%d %d", &x, &y);
         if(c != 2) {
-            fprintf(stderr, "Initialier file country.txt corrompt pos(%d,%d)\n", x, y);
+            fprintf(stderr, "Initializer file country.txt corrupt pos(%d,%d)\n", x, y);
             fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
@@ -77,7 +67,7 @@ country_t** create_countries(void) {
         uint nb_connections;
         c = fscanf(f_countries, "%d", &nb_connections);
         if(c != 1) {
-            fprintf(stderr, "Initialier file country.txt corrompt nb_conn(%d)", nb_connections);
+            fprintf(stderr, "Initializer file country.txt corrupt nb_conn(%d)", nb_connections);
             fprintf(stderr, "...line(%d)\n", line);
             exit(1);
         }
@@ -87,7 +77,7 @@ country_t** create_countries(void) {
             int id_conn;
             c = fscanf(f_countries,"%d", &id_conn);
             if(c != 1) {
-                fprintf(stderr, "Initialier file country.txt corrompt id_conn(%d)", id_conn);
+                fprintf(stderr, "Initializer file country.txt corrupt id_conn(%d)", id_conn);
                 fprintf(stderr, "...line(%d)\n", line);
                 exit(1);
             }
@@ -97,11 +87,19 @@ country_t** create_countries(void) {
         }
 
         countries[id] = country;
+        //printf("%s \n", countries[id]->name);
     }
-
+    printf("Supposed to be GRANDE-BRETAGNE: %s \n", countries[0]->name);
+/*
+    for (uint i=0; i < nb_total_countries; i++) {
+        printf("%d.%s (%u) \n", i, countries[i]->name, countries[i]->nb_connections);
+    }
+*/
     fclose(f_countries);
-    return countries;
+    //return countries;
 }
+
+
 
 uint get_nb_continents(void) {
     FILE* continents = fopen("./initializer/continent.txt", "r");
@@ -109,7 +107,7 @@ uint get_nb_continents(void) {
 
     int c = fscanf(continents, "%d", &nb_continents);
     if(c != 1) {
-        fprintf(stderr, "Initialier file continent.txt corrompt\n");
+        fprintf(stderr, "Initializer file continent.txt corrupt\n");
         exit(1);
     }
 
@@ -117,46 +115,35 @@ uint get_nb_continents(void) {
     return nb_continents;
 }
 
-continent_t** create_continents(country_t** countries) {
+void create_continents(continent_t** continents, country_t** countries) {
 
     FILE* f_continents = fopen("./initializer/continent.txt", "r");
     uint nb_continents;
     int c = fscanf(f_continents, "%d", &nb_continents);
     if(c != 1) {
-        fprintf(stderr, "Initializer file continent.txt corrompt\n");
-        exit(1);
-    }
-
-    continent_t** continents = malloc(nb_continents * sizeof(continent_t*));
-    if(countries == NULL) {
-        fprintf(stderr, "Cannot create all countries\n");
-        fprintf(stderr, "Cannot allocate memory\n");
+        fprintf(stderr, "Initializer file continent.txt corrupt\n");
         exit(1);
     }
 
     for(uint i=0; i < nb_continents; i++){
         continent_t* continent = continent_alloc();
 
-        char* name = malloc(sizeof(char) * LENGTH_MAX);
-        if(name == NULL) {
-            fprintf(stderr, "Cannot allocate memory ");
-            fprintf(stderr, "for name continent n°%u \n", i + 1);
-            exit(1);
-        }
+        char name[LENGTH_MAX];
         uint nb_country;
 
         c = fscanf(f_continents, "%s %d", name, &nb_country);
         if(c != 2) {
-            fprintf(stderr, "Initialier file continent.txt corrompt\n");
+            fprintf(stderr, "Initializer file continent.txt corrupt\n");
             exit(1);
         }
+        continent->id = i;
         continent->name = name;
 
         for(uint j=0; j < nb_country; j++){
             int id;
             c = fscanf(f_continents, "%d", &id);
             if(c != 1) {
-                fprintf(stderr, "Initialier file continent.txt corrompt\n");
+                fprintf(stderr, "Initializer file continent.txt corrupt\n");
                 exit(1);
             }
             continent->nb_country++;
@@ -166,10 +153,20 @@ continent_t** create_continents(country_t** countries) {
         }
 
         continents[i] = continent;
+        //printf("%s \n", continents[i]->name);
     }
-
+    printf("Supposed to be EUROPE : %s \n", continents[0]->name);
+/*
+    for (uint i=0; i < nb_continents; i++) {
+        printf("%d.%s \n", i, continents[i]->name);
+        for (uint j=0; j < continents[i]->nb_country; j++) {
+            int id = continents[i]->countries[j];
+            printf("\t%d.%s \n", j, countries[id]->name);
+        }
+    }
+*/
     fclose(f_continents);
-    return continents;
+    //return continents;
 }
 
 void free_all_countries(country_t** countries, uint nb_countries) {
@@ -181,5 +178,11 @@ void free_all_countries(country_t** countries, uint nb_countries) {
 void free_all_continents(continent_t** continents, uint nb_continents) {
     for(uint i=0; i < nb_continents; i++) {
         free_continent(continents[i]);
+    }
+}
+
+void free_all_users(user_t** users, uint nb_users) {
+    for (uint i=0; i < nb_users; i++) {
+        free_user(users[i]);
     }
 }

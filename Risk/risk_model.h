@@ -7,7 +7,6 @@
 #define CONTINENT_OWNED_MAX 6
 
 #define NB_MAX_PLAYERS 5
-#define NO_OWNER "NULL"
 
 #define LENGTH_MAX 30
 
@@ -66,7 +65,7 @@ typedef struct user_t{
     bool boost;
 } user_t;
 
-void initilize_state(state_t* state);
+void initiliaze_state(state_t* state);
 
 position_t* create_position(uint x, uint y);
 
@@ -79,6 +78,8 @@ void connect_countries(country_t* country1, country_t* country2);
 
 void add_troops(country_t* country, int nb_troops);
 void loss_troops(country_t* country, int nb_troops);
+
+bool all_possessed(country_t** countries, uint nb_countries);
 
 /*============CONTINENT====================*/
 

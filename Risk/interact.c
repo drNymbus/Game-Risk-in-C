@@ -4,19 +4,20 @@
 #include "risk_view_initialize.h"
 
 uint ask_nb_players(void) {
-    uint nb=-1;
-    int c=-1;
+    char convert[LENGTH_MAX];
+    char* receive;
+    uint nb=0;
+    int c=0;
 
-    fprintf(stdout, "Enter the number of players (/!\\ up to 5 /!\\) : ");
-
-    while (c != 1 && nb < 0 && nb > NB_MAX_PLAYERS) {
-        c = fscanf(stdin, "%u", &nb);
-        if(c != 1) {
+    do {
+        fprintf(stdout, "Enter the number of players (/!\\ up to 5 /!\\) : ");
+        c = fscanf(stdin, "%s", convert);
+        if (c != 1) {
             fprintf(stderr, "Bad command entered\n");
-        } else if (nb < 0 || nb > NB_MAX_PLAYERS) {
-            fprintf(stderr, "Enter a valid number\n");
+        } else {
+            nb = strtoul(convert, &receive, 10);
         }
-    }
+    } while (c != 1 || nb > NB_MAX_PLAYERS || nb == 0);
 
     return nb;
 }
@@ -27,7 +28,7 @@ user_t** ask_users(uint nb_players) {
         fprintf(stderr, "Cannot create users\n");
         exit(1);
     }
-    char* color[5] = {KRED, KGRN, KYEL, KMAG, KCYN};
+    char* color[5] = {"\x1B[31m", "\x1B[32m", "\x1B[33m", "\x1B[35m", "\x1B[36m"};
 
     if (nb_players <= NB_MAX_PLAYERS) {
 
@@ -62,4 +63,22 @@ int ask_troops(void) {
     while (c != 1) c = fscanf(stdin, "%u", &nb);
 
     return nb;
+}
+
+void choose_country(country_t** countries, uint nb_countries, user_t** users, uint nb_users) {
+    uint id=-1;
+    int c=0;
+    for (uint i=0; i < nb_users; i++) {
+        do {
+            fprintf(stdout, "%s, you need choose a country (enter the id) : ", users[i]->name);
+            c = fscanf(stdin, "%u", &id);
+            if (c != 1) {
+                fprintf(stderr, "Invalid command \n");
+            } else if (id > nb_countries) {
+                fprintf(stderr, "Invalid ID entered \n");
+            }
+        } while (c != 1 || id > nb_countries);
+        if (countries[id]->owner) {i--;}
+        else {countries[id]->owner = users[i];}
+    }
 }

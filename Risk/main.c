@@ -12,7 +12,7 @@ int main(void) {
         fprintf(stderr, "Can't create state_t");
         exit(1);
     }
-    initilize_state(state);
+    initiliaze_state(state);
 
     country_t** countries=NULL;
     uint nb_countries=0;
@@ -20,32 +20,53 @@ int main(void) {
     continent_t** continents=NULL;
     uint nb_continents=0;
 
-    //user_t* users;
-    //uint nb_players;
+    user_t** users;
+    uint nb_players;
     
     while (!state->end_game) {
         if (state->initialize) {
-            printf("Initialize...\n");
             nb_countries  = get_nb_countries();
-            nb_continents = get_nb_continents();
+            countries = malloc(nb_countries * sizeof(country_t*));
+            if(countries == NULL) {
+                fprintf(stderr, "Cannot create all countries\n");
+                exit(1);
+            }
 
-            countries = create_countries();
-            continents= create_continents(countries);
+            nb_continents = get_nb_continents();
+            continents = malloc(nb_continents * sizeof(continent_t*));
+            if(continents == NULL) {
+                fprintf(stderr, "Cannot create all continents\n");
+                exit(1);
+            }
+
+            create_countries(countries);
+            create_continents(continents, countries);
+
+            nb_players = ask_nb_players();
+            users = ask_users(nb_players);
 
             state->initialize= false;
             state->set_board = true;
+            //state->end_game  = true;
         } else if (state->set_board) {
-            printf("Print grid...\n");
-            print_grid(continents, nb_continents, countries);
-            state->end_game=true;
+            while (!all_possessed(countries, nb_countries)) {
+                print_grid(continents, nb_continents, countries);
+                choose_country(countries, nb_countries, users, nb_players);
+            }
+            state->end_game = true;
         }
     }
 
+    printf("Freeing...\n");
+    free_all_users(users, nb_players);
+    free(users);
 
     free_all_continents(continents, nb_continents);
-    free_all_countries(countries, nb_countries);
     free(continents);
+
+    free_all_countries(countries, nb_countries);
     free(countries);
 
+    printf("Done...\n");
     return EXIT_SUCCESS;
 }

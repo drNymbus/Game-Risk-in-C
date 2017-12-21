@@ -13,6 +13,7 @@
 
 /*=========================VIEW============================*/
 
+uint length_string(char* s);
 void print_empty_country(void);
 void print_country(country_t*country);
 void print_continent(continent_t* continent);
@@ -21,12 +22,14 @@ void print_grid(continent_t** continents, uint nb_continents, country_t** countr
 /*======================INITIALIZER========================*/
 
 uint get_nb_countries(void);
-country_t** create_countries(void);
+void create_countries(country_t** countries);
+
 uint get_nb_continents(void);
-continent_t** create_continents(country_t** countries);
+void create_continents(continent_t** continents, country_t** countries);
 
 void free_all_countries(country_t** countries, uint nb_countries);
 void free_all_continents(continent_t** continents, uint nb_continents);
+void free_all_users(user_t** users, uint nb_users);
 
 /*===================USER INTERACTION=======================*/
 
@@ -36,3 +39,4 @@ int ask_troops(void);
 char* ask_move(void);
 int* ask_from_to(void);
 //int ask_number(void);
+void choose_country(country_t** countries, uint nb_countries, user_t** users, uint nb_users);

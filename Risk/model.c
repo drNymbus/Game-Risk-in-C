@@ -6,7 +6,7 @@
 #include "risk_model.h"
 //#include "risk_view_initialize.h"
 
-void initilize_state(state_t* state) {
+void initiliaze_state(state_t* state) {
     state->end_game  = false;
     state->initialize= true;
     state->set_board = false;
@@ -46,6 +46,12 @@ country_t* country_alloc(void) {
         exit(1);
     }
 
+    char* name = malloc(sizeof(char) * LENGTH_MAX);
+    if(name == NULL) {
+        fprintf(stderr, "Cannot allocate memory for name\n");
+        exit(1);
+    }
+
     country_t* country = (country_t*) malloc(sizeof(country_t));
     if(country == NULL) {
         fprintf(stderr, "Cannot create country\n");
@@ -53,6 +59,7 @@ country_t* country_alloc(void) {
         exit(1);
     }
 
+    country->name = name;
     country->connections = connections;
     country->nb_connections = 0;
 
@@ -101,10 +108,18 @@ void loss_troops(country_t* country, int nb_troops) {
 }
 
 void free_country(country_t* country) {
-    free(country->name);
+    //printf("Freeing country : %s", country->name);
+//    free(country->name);
     free(country->connections);
 
     free(country);
+}
+
+bool all_possessed(country_t** countries, uint nb_countries) {
+    for (uint i=0; i < nb_countries; i++) {
+        if (countries[i]->owner == NULL) {return false;}
+    }
+    return true;
 }
 
 /*================================CONTINENT===================================*/
@@ -113,23 +128,27 @@ continent_t* continent_alloc(void) {
     int* countries = (int*) malloc(NB_CONTINENT_MAX * sizeof(int));
     if(countries == NULL) {
         fprintf(stderr, "Cannot create countries array\n");
-        fprintf(stderr, "Cannot allocate memory\n");
+        exit(1);
+    }
+
+    char* name = malloc(sizeof(char) * LENGTH_MAX);
+    if (name == NULL) {
+        fprintf(stderr, "Can't create name coutry \n");
         exit(1);
     }
 
     continent_t* continent = (continent_t*) malloc(sizeof(continent_t));
     if(continent == NULL) {
         fprintf(stderr, "Cannot create continent\n");
-        fprintf(stderr, "Cannot allocate memory\n");
         exit(1);
     }
 
+    continent->name = name;
     continent->countries = countries;
     continent->nb_country=0;
 
     continent->bonus_troop=0;
     continent->owner=NULL;
-    continent->name =NULL;
 
     return continent;
 }
