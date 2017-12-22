@@ -18,6 +18,7 @@
 typedef unsigned int uint;
 
 typedef struct{
+    int who_turn;
     bool end_game;
     bool initialize;
     bool set_board;
@@ -66,6 +67,7 @@ typedef struct user_t{
 } user_t;
 
 void initiliaze_state(state_t* state);
+void next_turn(state_t* state, uint nb_players);
 
 position_t* create_position(uint x, uint y);
 
@@ -95,5 +97,5 @@ void add_country(user_t* user, country_t* country);
 void loss_country(user_t* user, country_t* country);
 
 void add_stars(user_t* user, int nb_stars);
-uint calculation_gain(user_t* user);
+uint calculation_gain(user_t* user, continent_t** continents);
 void activate_boost(user_t* user, bool boost);

@@ -21,11 +21,11 @@ void print_grid(continent_t** continents, uint nb_continents, country_t** countr
 
 /*======================INITIALIZER========================*/
 
-uint get_nb_countries(void);
-void create_countries(country_t** countries);
+uint get_nb_countries(char* path);
+void create_countries(country_t** countries, char* path);
 
-uint get_nb_continents(void);
-void create_continents(continent_t** continents, country_t** countries);
+uint get_nb_continents(char* path);
+void create_continents(continent_t** continents, country_t** countries, char* path);
 
 void free_all_countries(country_t** countries, uint nb_countries);
 void free_all_continents(continent_t** continents, uint nb_continents);
@@ -33,10 +33,11 @@ void free_all_users(user_t** users, uint nb_users);
 
 /*===================USER INTERACTION=======================*/
 
+bool yes_no(void);
 uint ask_nb_players(void);
 user_t** ask_users(uint nb_players);
 int ask_troops(void);
-char* ask_move(void);
-int* ask_from_to(void);
-//int ask_number(void);
+void ask_move(char*);
+int ask_id_country(uint nb_countries);
 void choose_country(country_t** countries, uint nb_countries, user_t** users, uint nb_users);
+bool compare_string(char* s1, char* s2);

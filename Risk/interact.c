@@ -3,6 +3,18 @@
 
 #include "risk_view_initialize.h"
 
+bool yes_no(void) {
+    char valid = getc(stdin);
+    do {
+        while (valid != '\n') {valid = getc(stdin);}
+        fprintf(stdout, "Are you sure ? (y/n) ");
+        fscanf(stdin, "%c", &valid);
+    } while (valid != 'y' && valid != 'n');
+
+    if (valid == 'y') return true;
+    return false;
+}
+
 uint ask_nb_players(void) {
     char convert[LENGTH_MAX];
     char* receive;
@@ -65,20 +77,58 @@ int ask_troops(void) {
     return nb;
 }
 
+void ask_move(char* command) {
+    char empty=getc(stdin);
+    while (empty != '\n') {empty=getc(stdin);}
+
+    fprintf(stdout, "Enter your move : ");
+    fscanf(stdin, "%s", command);
+}
+
+int ask_id_country(uint nb_countries) {
+    char empty=getc(stdin);
+    int id=-1;
+
+    do {
+        while (empty != '\n') {empty=getc(stdin);}
+        fprintf(stdout, "Enter country's id : ");
+        fscanf(stdin, "%d", &id);
+    } while (id < 0 && id > nb_countries);
+
+    return id;
+}
+
 void choose_country(country_t** countries, uint nb_countries, user_t** users, uint nb_users) {
+    char empty = getc(stdin);
     uint id=-1;
     int c=0;
+
     for (uint i=0; i < nb_users; i++) {
+        while (empty != '\n' && empty != EOF) {empty = getc(stdin);}
         do {
             fprintf(stdout, "%s, you need choose a country (enter the id) : ", users[i]->name);
             c = fscanf(stdin, "%u", &id);
+
             if (c != 1) {
                 fprintf(stderr, "Invalid command \n");
             } else if (id > nb_countries) {
                 fprintf(stderr, "Invalid ID entered \n");
             }
+
         } while (c != 1 || id > nb_countries);
+
         if (countries[id]->owner) {i--;}
         else {countries[id]->owner = users[i];}
     }
+}
+
+bool compare_string(char* s1, char* s2) {
+    if (length_string(s1) != length_string(s2)) return false;
+
+    uint i=0;
+    while (s1[i] != '\0' && s2[i] != '\0') {
+        if (s1[i] != s2[i]) return false;
+        i++;
+    }
+    return true;
 }

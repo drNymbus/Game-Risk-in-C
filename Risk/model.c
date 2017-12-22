@@ -7,12 +7,20 @@
 //#include "risk_view_initialize.h"
 
 void initiliaze_state(state_t* state) {
+    state->who_turn  = -1;
     state->end_game  = false;
     state->initialize= true;
     state->set_board = false;
     state->set_turn  = false;
     state->turn      = false;
     state->end_turn  = false;
+}
+
+void next_turn(state_t* state, uint nb_players) {
+    state->who_turn++;
+    if (state->who_turn == nb_players) {
+        state->who_turn = 0;
+    }
 }
 
 position_t* create_position(uint x, uint y) {
@@ -219,7 +227,7 @@ void add_stars(user_t* user, int nb_stars) {//put negative nb_stars to get loss_
     user->nb_stars += nb_stars;
 }
 
-uint add_calculation_gain(user_t* user, continent_t* continents[]) {
+uint calculation_gain(user_t* user, continent_t** continents) {
     uint gain = user->gain;
     for(uint i=0; i < user->nb_continent; i++) {
         gain += continents[user->continents[i]]->bonus_troop;

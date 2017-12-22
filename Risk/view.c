@@ -48,6 +48,8 @@ void print_continent(continent_t* continent) {
 }
 
 void print_grid(continent_t** continents, uint nb_continents, country_t** countries) {
+    system("cls"); //MS-DOS
+    /*system("clear"); //UNIX*/
     for (uint i = 0; i < nb_continents; i++) {
         print_continent(continents[i]);
     }

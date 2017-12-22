@@ -5,8 +5,8 @@
 
 #include "risk_view_initialize.h"
 
-uint get_nb_countries(void) {
-    FILE* f_countries = fopen("./initializer/country.txt", "r");
+uint get_nb_countries(char* path) {
+    FILE* f_countries = fopen(path, "r");
     if (f_countries == NULL) {
         perror("Error");
         exit(1);
@@ -23,10 +23,10 @@ uint get_nb_countries(void) {
     return nb_countries;
 }
 
-void create_countries(country_t** countries) {
+void create_countries(country_t** countries, char* path) {
 
     uint nb_total_countries;
-    FILE* f_countries = fopen("./initializer/country.txt", "r");
+    FILE* f_countries = fopen(path, "r");
 
     int c = fscanf(f_countries, "%u", &nb_total_countries);
     if(c != 1) {
@@ -89,7 +89,7 @@ void create_countries(country_t** countries) {
         countries[id] = country;
         //printf("%s \n", countries[id]->name);
     }
-    printf("Supposed to be GRANDE-BRETAGNE: %s \n", countries[0]->name);
+    //printf("Supposed to be GRANDE-BRETAGNE: %s \n", countries[0]->name);
 /*
     for (uint i=0; i < nb_total_countries; i++) {
         printf("%d.%s (%u) \n", i, countries[i]->name, countries[i]->nb_connections);
@@ -101,8 +101,8 @@ void create_countries(country_t** countries) {
 
 
 
-uint get_nb_continents(void) {
-    FILE* continents = fopen("./initializer/continent.txt", "r");
+uint get_nb_continents(char* path) {
+    FILE* continents = fopen(path, "r");
     uint nb_continents;
 
     int c = fscanf(continents, "%d", &nb_continents);
@@ -115,9 +115,9 @@ uint get_nb_continents(void) {
     return nb_continents;
 }
 
-void create_continents(continent_t** continents, country_t** countries) {
+void create_continents(continent_t** continents, country_t** countries, char* path) {
 
-    FILE* f_continents = fopen("./initializer/continent.txt", "r");
+    FILE* f_continents = fopen(path, "r");
     uint nb_continents;
     int c = fscanf(f_continents, "%d", &nb_continents);
     if(c != 1) {
@@ -155,7 +155,7 @@ void create_continents(continent_t** continents, country_t** countries) {
         continents[i] = continent;
         //printf("%s \n", continents[i]->name);
     }
-    printf("Supposed to be EUROPE : %s \n", continents[0]->name);
+    //printf("Supposed to be EUROPE : %s \n", continents[0]->name);
 /*
     for (uint i=0; i < nb_continents; i++) {
         printf("%d.%s \n", i, continents[i]->name);
