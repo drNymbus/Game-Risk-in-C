@@ -36,13 +36,19 @@ int main(void) {
     }
     create_continents(continents, countries, path_continent);
 
-    char* command = malloc(sizeof(char) * LENGTH_MAX);
-    if (command == NULL) {
-        fprintf(stderr, "Can't create command string\n");
-        exit(1);
-    }
+    action user_move;
+
+    display_rules();
 
     while (!state->end_game) {
+  /*      if (state->who_turn != -1) {
+            //system("cls"); //MS-DOS
+            system("clear"); //UNIX
+            display_instructions(state);
+            print_grid(continents, nb_continents, countries);
+            display_user_info(users[state->who_turn]);
+        }*/
+
         if (state->initialize) {
 
             nb_players = ask_nb_players();
@@ -55,7 +61,9 @@ int main(void) {
                 free_all_users(users, nb_players);
                 free(users);
                 nb_players=-1;
-            }//state->end_game  = true;
+            }
+
+
         } else if (state->set_board) {
             /*while (!all_possessed(countries, nb_countries)) {
                 print_grid(continents, nb_continents, countries);
@@ -72,27 +80,66 @@ int main(void) {
                     countries[i]->owner = NULL;
                 }
             }
+
+
         } else if (state->set_turn) {
+            //system("cls"); //MS-DOS
+            system("clear"); //UNIX
+            display_instructions(state);
+            print_grid(continents, nb_continents, countries);
+            display_user_info(users[state->who_turn]);
+
             user_t* user_turn = users[state->who_turn];
             printf("Turn ==> %s \n", user_turn->name);
             user_turn->gain += calculation_gain(user_turn, continents);
+            user_turn->boost = false;
 
-            do {
-                ask_move(command);
-                if (command == "deploy") {
+            user_move = ask_move();
+            if (user_move == DEPLOY) {
+                if (user_turn->gain > 0) {
+                    int nb_troops = ask_troops();
+                    int to = ask_id_country("Where do you want your new troops (country's id): ", nb_countries);
 
+                    add_troops(countries[to], nb_troops);
                 }
-            }while (command != "Attack");
+                fprintf(stderr, "You cannot deploy your gain is not sufficient... \n");
+
+            } else if (user_move == MOVE) {
+                int from, to;
+                from = ask_id_country("Choose the country's id from : ", nb_countries);
+                to = ask_id_country("Where do you want the unit (enter the country id) : ", nb_countries);
+                int nb_troops = ask_troops();
+
+                if (are_connected(countries, from, to)) {
+                    loss_troops(countries[from], nb_troops);
+                    add_troops(countries[to], nb_troops);
+                }
+
+            } else if (user_move == BOOST) {
+                if (user_turn->nb_stars ==0  && user_turn->boost) {user_turn->boost = true;}
+                else if (user_turn->boost) {fprintf(stderr, "Boost already active");}
+                else {fprintf(stderr, "Not enough stars to apply boost (min. 2)\n");}
+
+            } else if (user_move == ATTACK) {
+                if (yes_no()) {
+                    state->set_turn = false;
+                    state->turn = true;
+                }
+            }
+
+
+        } else if (state->turn) {
+            //system("cls"); //MS-DOS
+            system("clear"); //UNIX
+            display_instructions(state);
+            print_grid(continents, nb_continents, countries);
+            display_user_info(users[state->who_turn]);
 
             if (yes_no()) {
-                state->set_turn= false;
-                state->turn    = true;
+                state->turn = true;
+                state->end_turn = false;
             }
-        } else if (state->turn) {
-            if (yes_no()) {
-                state->turn    = true;
-                state->end_turn= false;
-            }
+
         } else if (state->end_turn) {
             next_turn(state, nb_players);
         }

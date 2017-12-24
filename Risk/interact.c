@@ -77,21 +77,35 @@ int ask_troops(void) {
     return nb;
 }
 
-void ask_move(char* command) {
+action ask_move(void) {
+    char move[LENGTH_MAX];
     char empty=getc(stdin);
-    while (empty != '\n') {empty=getc(stdin);}
+    action user_move = STOP;
 
-    fprintf(stdout, "Enter your move : ");
-    fscanf(stdin, "%s", command);
+    do {
+        while (empty != '\n') { empty = getc(stdin); }
+        fprintf(stdout, "Enter your move : ");
+
+        fscanf(stdin, "%s", move);
+        lower_case(move);
+        if (compare_string(move, "attack")) {user_move=ATTACK;}
+        if (compare_string(move, "deploy")) {user_move=DEPLOY;}
+        if (compare_string(move, "move"))   {user_move=MOVE;}
+        if (compare_string(move, "boost"))  {user_move=BOOST;}
+        if (compare_string(move, "end"))    {user_move=END;}
+
+    } while (user_move == STOP);
+
+    return user_move;
 }
 
-int ask_id_country(uint nb_countries) {
+int ask_id_country(char* msg, uint nb_countries) {
     char empty=getc(stdin);
     int id=-1;
 
     do {
         while (empty != '\n') {empty=getc(stdin);}
-        fprintf(stdout, "Enter country's id : ");
+        fprintf(stdout, "%s", msg);
         fscanf(stdin, "%d", &id);
     } while (id < 0 && id > nb_countries);
 
@@ -119,6 +133,14 @@ void choose_country(country_t** countries, uint nb_countries, user_t** users, ui
 
         if (countries[id]->owner) {i--;}
         else {countries[id]->owner = users[i];}
+    }
+}
+
+void lower_case(char* str) {
+    uint i=0;
+    while (str[i] != '\0') {
+        if (str[i] > 64 && str[i] < 91) {str[i] += 'A'-'a';}
+        i++;
     }
 }
 

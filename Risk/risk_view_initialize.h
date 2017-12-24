@@ -18,6 +18,9 @@ void print_empty_country(void);
 void print_country(country_t*country);
 void print_continent(continent_t* continent);
 void print_grid(continent_t** continents, uint nb_continents, country_t** countries);
+void display_instructions(state_t* state);
+void display_user_info(user_t* user);
+void display_rules(void);
 
 /*======================INITIALIZER========================*/
 
@@ -37,7 +40,8 @@ bool yes_no(void);
 uint ask_nb_players(void);
 user_t** ask_users(uint nb_players);
 int ask_troops(void);
-void ask_move(char*);
-int ask_id_country(uint nb_countries);
+action ask_move(void);
+int ask_id_country(char* msg, uint nb_countries);
 void choose_country(country_t** countries, uint nb_countries, user_t** users, uint nb_users);
+void lower_case(char* str);
 bool compare_string(char* s1, char* s2);

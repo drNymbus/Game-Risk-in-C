@@ -48,8 +48,6 @@ void print_continent(continent_t* continent) {
 }
 
 void print_grid(continent_t** continents, uint nb_continents, country_t** countries) {
-    system("cls"); //MS-DOS
-    /*system("clear"); //UNIX*/
     for (uint i = 0; i < nb_continents; i++) {
         print_continent(continents[i]);
     }
@@ -63,4 +61,39 @@ void print_grid(continent_t** continents, uint nb_continents, country_t** countr
         }
         printf("\n");
     }
+}
+
+void display_instructions(state_t* state) {
+    printf("Commands : ");
+    if (state->set_turn) {
+        printf("'attack' to launch attack_phase, ");
+        printf("'move' to move troops, ");
+        printf("'deploy' to deploy troops (from gain), ");
+        printf("'boost' to activate boost");
+    } else if (state->turn) {
+        printf("'attack' to go in attack mode, ");
+        printf("'end' to end your turn");
+    }
+    printf("\n\n");
+}
+
+void display_user_info(user_t* user) {
+    if (user == NULL) {
+        return;
+    }
+
+    printf("\n");
+    printf("Nb countries possessed : %d |\n", user->nb_country);
+    printf("Nb stars possessed : %d     |\n", user->nb_stars);
+    printf("Nb troops to deploy : %d    |\n", user->gain);
+
+    if (user->boost) {
+        printf("You boost is acive          |\n");
+    } else {
+        printf("You're boost is not active |\n");
+    }
+}
+
+void display_rules(void) {
+    //printf("");
 }

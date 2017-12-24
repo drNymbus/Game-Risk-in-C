@@ -92,35 +92,42 @@ void connect_countries(country_t* country1, country_t* country2) {
 void add_troops(country_t* country, int nb_troops) {
     if(nb_troops < 0) {
         fprintf(stderr, "Invalid nb_troops\n");
-        exit(1);
+        return;
     }
 
     country->current_troop += nb_troops;
     if(country->current_troop < 0) {
         fprintf(stderr, "Too many troops in country (limit id (2**64)-1, theorically)\n");
-        exit(1);
+        country->current_troop -= nb_troops;
     }
 }
 
 void loss_troops(country_t* country, int nb_troops) {
     if(nb_troops < 0) {
         fprintf(stderr, "Invalid nb_troops\n");
-        exit(1);
+        return ;
     }
 
     country->current_troop -= nb_troops;
     if(country->current_troop < 0) {
         fprintf(stderr, "Too many troops in country (limit id (2**64)-1, theorically)\n");
-        exit(1);
+        country->current_troop += nb_troops;
     }
 }
 
 void free_country(country_t* country) {
-    //printf("Freeing country : %s", country->name);
-//    free(country->name);
+    free(country->name);
     free(country->connections);
 
     free(country);
+}
+
+bool are_connected(country_t** countries, int from, int to) {
+    country_t* c_from = countries[from];
+    for (uint i=0; i < c_from->nb_connections; i++) {
+        if (c_from->connections[i] == to) {return true;}
+    }
+    return false;
 }
 
 bool all_possessed(country_t** countries, uint nb_countries) {
@@ -227,30 +234,13 @@ void add_stars(user_t* user, int nb_stars) {//put negative nb_stars to get loss_
     user->nb_stars += nb_stars;
 }
 
-uint calculation_gain(user_t* user, continent_t** continents) {
-    uint gain = user->gain;
+int calculation_gain(user_t* user, continent_t** continents) {
+    int gain = user->gain;
     for(uint i=0; i < user->nb_continent; i++) {
         gain += continents[user->continents[i]]->bonus_troop;
     }
     gain += user->nb_country / 3;
     return gain;
-}
-
-void activate_boost(user_t* user, bool boost) {
-    if(user->boost == boost) {
-        fprintf(stderr, "Boost already %s\n", boost ? "true" : "fasle");
-    } else if(user->nb_stars < 0 && boost) {
-        fprintf(stderr, "Cannot activate boost, not enough stars");
-    }
-    user->boost = boost;
-}
-
-void apply_boost(user_t* user) {
-    if(!(user->boost)) {
-        fprintf(stderr, "Cannot apply boost");
-        user->gain -= user->nb_stars * 2;
-    }
-    user->gain += user->nb_stars * 2;
 }
 
 void free_user(user_t* user) {

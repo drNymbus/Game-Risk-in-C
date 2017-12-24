@@ -14,7 +14,7 @@
 #define MAP_Y 10
 #define NB_CELLS MAP_X*MAP_Y
 
-
+typedef enum {STOP, DEPLOY, MOVE, BOOST, ATTACK, END} action;
 typedef unsigned int uint;
 
 typedef struct{
@@ -61,9 +61,10 @@ typedef struct user_t{
     uint nb_continent;
     int* continents;
     int nb_stars;
-    uint gain;
+    int gain;
     char* color;
     bool boost;
+    bool country_won;
 } user_t;
 
 void initiliaze_state(state_t* state);
@@ -81,6 +82,7 @@ void connect_countries(country_t* country1, country_t* country2);
 void add_troops(country_t* country, int nb_troops);
 void loss_troops(country_t* country, int nb_troops);
 
+bool are_connected(country_t** countries, int from, int to);
 bool all_possessed(country_t** countries, uint nb_countries);
 
 /*============CONTINENT====================*/
@@ -97,5 +99,4 @@ void add_country(user_t* user, country_t* country);
 void loss_country(user_t* user, country_t* country);
 
 void add_stars(user_t* user, int nb_stars);
-uint calculation_gain(user_t* user, continent_t** continents);
-void activate_boost(user_t* user, bool boost);
+int calculation_gain(user_t* user, continent_t** continents);
