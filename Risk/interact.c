@@ -104,7 +104,7 @@ int ask_id_country(char* msg, uint nb_countries) {
     int id=-1;
 
     do {
-        while (empty != '\n') {empty=getc(stdin);}
+        while (empty != '\n') empty=getc(stdin);
         fprintf(stdout, "%s", msg);
         fscanf(stdin, "%d", &id);
     } while (id < 0 && id > nb_countries);
@@ -114,24 +114,28 @@ int ask_id_country(char* msg, uint nb_countries) {
 
 void choose_country(country_t** countries, uint nb_countries, user_t** users, uint nb_users) {
     char empty = getc(stdin);
+    char convert[LENGTH_MAX];
+    char* receive;
     uint id=-1;
     int c=0;
 
     for (uint i=0; i < nb_users; i++) {
-        while (empty != '\n' && empty != EOF) {empty = getc(stdin);}
+
         do {
+            while (empty != '\n') {empty = getc(stdin);}
             fprintf(stdout, "%s, you need choose a country (enter the id) : ", users[i]->name);
-            c = fscanf(stdin, "%u", &id);
+            c = fscanf(stdin, "%s", convert);
+            id = strtoul(convert, &receive, 10);
 
             if (c != 1) {
                 fprintf(stderr, "Invalid command \n");
-            } else if (id > nb_countries) {
+            } else if (id > nb_countries || id == -1) {
                 fprintf(stderr, "Invalid ID entered \n");
             }
 
         } while (c != 1 || id > nb_countries);
 
-        if (countries[id]->owner) {i--;}
+        if (countries[id]->owner) {i--;fprintf(stderr,"This country is already taken\n");}
         else {countries[id]->owner = users[i];}
     }
 }

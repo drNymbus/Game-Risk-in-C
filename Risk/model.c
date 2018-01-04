@@ -89,30 +89,34 @@ void connect_countries(country_t* country1, country_t* country2) {
     country2->connections[conn] = country1->id;
 }
 
-void add_troops(country_t* country, int nb_troops) {
+bool add_troops(country_t* country, int nb_troops) {
     if(nb_troops < 0) {
         fprintf(stderr, "Invalid nb_troops\n");
-        return;
+        return false;
     }
 
     country->current_troop += nb_troops;
     if(country->current_troop < 0) {
         fprintf(stderr, "Too many troops in country (limit id (2**64)-1, theorically)\n");
         country->current_troop -= nb_troops;
+        return false;
     }
+    return true;
 }
 
-void loss_troops(country_t* country, int nb_troops) {
+bool loss_troops(country_t* country, int nb_troops) {
     if(nb_troops < 0) {
         fprintf(stderr, "Invalid nb_troops\n");
-        return ;
+        return false;
     }
 
     country->current_troop -= nb_troops;
     if(country->current_troop < 0) {
         fprintf(stderr, "Too many troops in country (limit id (2**64)-1, theorically)\n");
         country->current_troop += nb_troops;
+        return false;
     }
+    return true;
 }
 
 void free_country(country_t* country) {

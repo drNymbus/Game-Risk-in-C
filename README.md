@@ -33,6 +33,7 @@ The scheme:
     main.c
         <ul>--> Contains the logic of the game.</ul>
         <ul>--> With no surprise this file contains the main function.</ul>
+    </ul>
 
 ## Future
 <ol>Some     bots will be added in the game to fill a game or to play alone.</ol>

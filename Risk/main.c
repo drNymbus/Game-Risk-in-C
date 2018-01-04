@@ -41,22 +41,27 @@ int main(void) {
     display_rules();
 
     while (!state->end_game) {
-  /*      if (state->who_turn != -1) {
+        if (state->draw) {
             //system("cls"); //MS-DOS
             system("clear"); //UNIX
+
             display_instructions(state);
             print_grid(continents, nb_continents, countries);
             display_user_info(users[state->who_turn]);
-        }*/
+
+            state->draw = false;
+        }
 
         if (state->initialize) {
 
             nb_players = ask_nb_players();
+            fprintf(stdout, "Enter the names of all players : \n");
             users = ask_users(nb_players);
 
             if (yes_no()) {
                 state->initialize = false;
                 state->set_board = true;
+                state->draw = true;
             } else {
                 free_all_users(users, nb_players);
                 free(users);
@@ -66,6 +71,7 @@ int main(void) {
 
         } else if (state->set_board) {
             /*while (!all_possessed(countries, nb_countries)) {
+                system("clear");
                 print_grid(continents, nb_continents, countries);
                 choose_country(countries, nb_countries, users, nb_players);
             }*/
@@ -75,6 +81,7 @@ int main(void) {
                 state->who_turn = 0;
                 state->set_board= false;
                 state->set_turn = true;
+                state->draw = true;
             } else {
                 for (uint i=0; i < nb_countries; i++) {
                     countries[i]->owner = NULL;
@@ -83,12 +90,6 @@ int main(void) {
 
 
         } else if (state->set_turn) {
-            //system("cls"); //MS-DOS
-            system("clear"); //UNIX
-            display_instructions(state);
-            print_grid(continents, nb_continents, countries);
-            display_user_info(users[state->who_turn]);
-
             user_t* user_turn = users[state->who_turn];
             printf("Turn ==> %s \n", user_turn->name);
             user_turn->gain += calculation_gain(user_turn, continents);
@@ -100,7 +101,7 @@ int main(void) {
                     int nb_troops = ask_troops();
                     int to = ask_id_country("Where do you want your new troops (country's id): ", nb_countries);
 
-                    add_troops(countries[to], nb_troops);
+                    state->draw = add_troops(countries[to], nb_troops);
                 }
                 fprintf(stderr, "You cannot deploy your gain is not sufficient... \n");
 
@@ -111,30 +112,26 @@ int main(void) {
                 int nb_troops = ask_troops();
 
                 if (are_connected(countries, from, to)) {
-                    loss_troops(countries[from], nb_troops);
-                    add_troops(countries[to], nb_troops);
+                    state->draw = loss_troops(countries[from], nb_troops);
+                    if (state->draw) state->draw=add_troops(countries[to], nb_troops);
                 }
 
             } else if (user_move == BOOST) {
-                if (user_turn->nb_stars ==0  && user_turn->boost) {user_turn->boost = true;}
+                if (user_turn->nb_stars > 1  && user_turn->boost) {user_turn->boost = true;state->draw = true;}
                 else if (user_turn->boost) {fprintf(stderr, "Boost already active");}
                 else {fprintf(stderr, "Not enough stars to apply boost (min. 2)\n");}
 
             } else if (user_move == ATTACK) {
+                fprintf(stdout, "You'll pass in attack mode.");
                 if (yes_no()) {
                     state->set_turn = false;
                     state->turn = true;
+                    state->draw = true;
                 }
             }
 
 
         } else if (state->turn) {
-            //system("cls"); //MS-DOS
-            system("clear"); //UNIX
-            display_instructions(state);
-            print_grid(continents, nb_continents, countries);
-            display_user_info(users[state->who_turn]);
-
             if (yes_no()) {
                 state->turn = true;
                 state->end_turn = false;

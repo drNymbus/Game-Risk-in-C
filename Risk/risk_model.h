@@ -19,6 +19,7 @@ typedef unsigned int uint;
 
 typedef struct{
     int who_turn;
+    bool draw;
     bool end_game;
     bool initialize;
     bool set_board;
@@ -36,7 +37,7 @@ typedef struct position_t{
 typedef struct country_t{
     int id;
     char* name;
-    struct user_t* owner;//ID
+    struct user_t* owner;
     uint nb_connections;
     int* connections;
     int current_troop;
@@ -48,7 +49,7 @@ typedef struct country_t{
 typedef struct continent_t{
     int id;
     char* name;
-    struct user_t* owner;//ID
+    struct user_t* owner;
     uint nb_country;
     int* countries;
     int bonus_troop;
@@ -79,8 +80,8 @@ void free_country(country_t* country);
 
 void connect_countries(country_t* country1, country_t* country2);
 
-void add_troops(country_t* country, int nb_troops);
-void loss_troops(country_t* country, int nb_troops);
+bool add_troops(country_t* country, int nb_troops);
+bool loss_troops(country_t* country, int nb_troops);
 
 bool are_connected(country_t** countries, int from, int to);
 bool all_possessed(country_t** countries, uint nb_countries);
